@@ -1644,6 +1644,7 @@
                 },
 
                 submitForm() {
+
                     console.log("Before Sending:", this.formData);
 
                     // Convert the Proxy object to a plain JavaScript object
