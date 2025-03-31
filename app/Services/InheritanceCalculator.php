@@ -95,8 +95,8 @@ class InheritanceCalculator
 
         // 4. Daughter's share (correct)
         if (!$this->hasDescendantSons()) {
-            $aliveDaughters = $this->data['heirs']['aliveDaughters']['count'] ?? 0;
-            $deceasedDaughters = $this->data['heirs']['deceasedDaughters']['names'] ?? [];
+            $aliveDaughters = $this->data['heirs']['children']['aliveDaughters']['count'] ?? 0;
+            $deceasedDaughters = $this->data['heirs']['children']['deceasedDaughters']['names'] ?? [];
 
             // Count deceased daughters with living children
             $deceasedWithChildren = array_filter($deceasedDaughters, function ($d) {
@@ -118,40 +118,79 @@ class InheritanceCalculator
                 $perEffectiveDaughter = $totalDaughterShare / $effectiveDaughters;
 
                 // Distribute to alive daughters
-                foreach ($this->data['heirs']['aliveDaughters']['names'] as $daughter) {
-                    $this->addShare($daughter['label'], $perEffectiveDaughter, $daughter['name']);
+                foreach ($this->data['heirs']['children']['aliveDaughters']['names'] as $index => $daughter) {
+                    $label = $this->addOrdinalToLabel($this->data['heirs']['children']['aliveDaughters']['label'], $index);
+                    $this->addShare($label, $perEffectiveDaughter, $daughter['name']);
                 }
 
-                // Distribute to deceased daughters' children
-                foreach ($deceasedWithChildren as $deceased) {
+                foreach ($deceasedWithChildren as $deceasedIndex => $deceased) {
                     $totalParts = ($deceased['sonsCount'] * 2) + $deceased['daughtersCount'];
 
-                    // Sons get 2:1 ratio
                     $sonShare = ($perEffectiveDaughter * 2) / $totalParts;
                     $daughterShare = $perEffectiveDaughter / $totalParts;
 
-                    foreach ($deceased['sonsNames'] as $son) {
-                        $this->addShare($son['label'], $sonShare, $son['name']);
+                    // For sons of deceased daughter
+                    foreach ($deceased['sonsNames'] as $sonIndex => $son) {
+                        $label = $this->addOrdinalToLabel(
+                            "মৃত মেয়ের ছেলে",  // Base label
+                            $sonIndex           // Index within this daughter's sons
+                        );
+                        $this->addShare($label, $sonShare, $son['name'] ?? null);
                     }
 
-                    foreach ($deceased['daughtersNames'] as $daughter) {
-                        $this->addShare($daughter['label'], $daughterShare, $daughter['name']);
+                    // For daughters of deceased daughter
+                    foreach ($deceased['daughtersNames'] as $daughterIndex => $daughter) {
+                        $label = $this->addOrdinalToLabel(
+                            "মৃত মেয়ের মেয়ে",  // Base label
+                            $daughterIndex      // Index within this daughter's daughters
+                        );
+                        $this->addShare($label, $daughterShare, $daughter['name'] ?? null);
                     }
                 }
             }
         }
 
         // 5. Full Sister's share (FIXED: Exclude if full brothers exist)
-        if (!$this->hasDescendantSons() && !$this->hasDescendantDaughters() && !$this->isAlive('aliveParentStatus', 'father')) {
-            // Check if there are NO full brothers
+        if (
+            !$this->hasDescendantSons() &&
+            !$this->hasDescendantDaughters() &&
+            !$this->isAlive('aliveParentStatus', 'father')
+        ) {
             $fullBrothersCount = $this->data['heirs']['siblings']['brothers']['count'] ?? 0;
+
             if ($fullBrothersCount === 0) {
-                $fullSisterCount = $this->data['heirs']['siblings']['sisters']['count'] ?? 0;
+                $sisters = $this->data['heirs']['siblings']['sisters'];
+                $fullSisterCount = $sisters['count'] ?? 0;
+                $sisterNames = $sisters['names'] ?? [];
+
                 if ($fullSisterCount === 1) {
-                    $this->addShare('Full Sister', 1 / 2);
+                    // Single sister - use name if available
+                    $sister = $sisterNames[0] ?? [];
+                    $label = $this->addOrdinalToLabel(
+                        $sisters['label'] ?? 'সহোদর বোন',
+                        0
+                    );
+                    $this->addShare(
+                        $label,
+                        1 / 2,
+                        $sister['name'] ?? null
+                    );
                     $this->remainingShare -= 1 / 2;
                 } elseif ($fullSisterCount > 1) {
-                    $this->addShare('Full Sisters', 2 / 3);
+                    // Multiple sisters - divide 2/3 equally
+                    $sharePerSister = (2 / 3) / $fullSisterCount;
+
+                    foreach ($sisterNames as $index => $sister) {
+                        $label = $this->addOrdinalToLabel(
+                            $sisters['label'] ?? 'সহোদর বোন',
+                            $index
+                        );
+                        $this->addShare(
+                            $label,
+                            $sharePerSister,
+                            $sister['name'] ?? null
+                        );
+                    }
                     $this->remainingShare -= 2 / 3;
                 }
             }
@@ -166,38 +205,115 @@ class InheritanceCalculator
         ) {
             $fullBrothersCount = $this->data['heirs']['siblings']['brothers']['count'] ?? 0;
             $fullSistersCount = $this->data['heirs']['siblings']['sisters']['count'] ?? 0;
-            $paternalHalfSisterCount = $this->data['heirs']['alivePaternalHalfSisters']['count'] ?? 0;
+            $paternalHalfSisters = $this->data['heirs']['alivePaternalHalfSisters'] ?? [];
+            $paternalHalfSisterCount = $paternalHalfSisters['count'] ?? 0;
+            $paternalHalfSisterNames = $paternalHalfSisters['names'] ?? [];
 
-            // Case 1: No full brothers, but there are full sisters
+            // Case 1: No full brothers, but full sisters exist
             if ($fullBrothersCount === 0 && $fullSistersCount >= 1) {
                 if ($paternalHalfSisterCount >= 1) {
-                    // Paternal half-sister(s) get 1/6 total (shared equally)
                     $share = 1 / 6;
-                    $this->addShare('Paternal Half-Sister(s)', $share);
+                    $sharePerSister = $share / $paternalHalfSisterCount;
+
+                    foreach ($paternalHalfSisterNames as $index => $sister) {
+                        $label = $this->addOrdinalToLabel(
+                            $paternalHalfSisters['label'] ?? 'বৈমাতৃয় বোন',
+                            $index
+                        );
+                        $this->addShare(
+                            $label,
+                            $sharePerSister,
+                            $sister['name'] ?? null
+                        );
+                    }
                     $this->remainingShare -= $share;
                 }
             }
             // Case 2: No full siblings at all
             elseif ($fullBrothersCount === 0 && $fullSistersCount === 0) {
                 if ($paternalHalfSisterCount === 1) {
-                    $this->addShare('Paternal Half-Sister', 1 / 2);
+                    $sister = $paternalHalfSisterNames[0] ?? [];
+                    $label = $this->addOrdinalToLabel(
+                        $paternalHalfSisters['label'] ?? 'বৈমাতৃয় বোন',
+                        0
+                    );
+                    $this->addShare(
+                        $label,
+                        1 / 2,
+                        $sister['name'] ?? null
+                    );
                     $this->remainingShare -= 1 / 2;
                 } elseif ($paternalHalfSisterCount > 1) {
-                    $this->addShare('Paternal Half-Sisters', 2 / 3);
+                    $share = 2 / 3;
+                    $sharePerSister = $share / $paternalHalfSisterCount;
+
+                    foreach ($paternalHalfSisterNames as $index => $sister) {
+                        $label = $this->addOrdinalToLabel(
+                            $paternalHalfSisters['label'] ?? 'বৈমাতৃয় বোন',
+                            $index
+                        );
+                        $this->addShare(
+                            $label,
+                            $sharePerSister,
+                            $sister['name'] ?? null
+                        );
+                    }
                     $this->remainingShare -= 2 / 3;
                 }
             }
         }
 
         // 7. Maternal Half-Sibling's share (FIXED: Check for NO parents/children)
-        if (!$this->isAlive('aliveParentStatus', 'father') && !$this->isAlive('aliveParentStatus', 'mother') && !$this->hasDescendantSons() && !$this->hasDescendantDaughters()) {
-            $maternalHalfSiblingCount = $this->data['heirs']['aliveMaternalHalfSiblings']['count'] ?? 0;
-            if ($maternalHalfSiblingCount === 1) {
-                $this->addShare('Maternal Half-Sibling', 1 / 6);
-                $this->remainingShare -= 1 / 6;
-            } elseif ($maternalHalfSiblingCount > 1) {
-                $this->addShare('Maternal Half-Siblings', 1 / 3);
-                $this->remainingShare -= 1 / 3;
+        if (
+            !$this->isAlive('aliveParentStatus', 'father')
+            && !$this->isAlive('aliveParentStatus', 'mother')
+            && !$this->hasDescendantSons()
+            && !$this->hasDescendantDaughters()
+        ) {
+            // Get from correct data path (otherRelatives instead of aliveMaternalHalfSiblings)
+            $maternalBrothers = $this->data['heirs']['otherRelatives']['maternalHalfBrother'] ?? [];
+            $maternalSisters = $this->data['heirs']['otherRelatives']['maternalHalfSister'] ?? [];
+
+            $brotherCount = $maternalBrothers['count'] ?? 0;
+            $sisterCount = $maternalSisters['count'] ?? 0;
+            $totalSiblings = $brotherCount + $sisterCount;
+
+            if ($totalSiblings > 0) {
+                // Determine total share (1/6 for single, 1/3 for multiple)
+                $totalShare = $totalSiblings === 1 ? 1 / 6 : 1 / 3;
+                $totalParts = ($brotherCount * 2) + $sisterCount;
+
+                if ($totalParts > 0) {
+                    $partValue = $totalShare / $totalParts;
+
+                    // Process brothers with 2:1 ratio
+                    foreach ($maternalBrothers['names'] as $index => $brother) {
+                        $label = $this->addOrdinalToLabel(
+                            $maternalBrothers['label'] ?? 'বৈপিত্রেয় ভাই',
+                            $index
+                        );
+                        $this->addShare(
+                            $label,
+                            $partValue * 2,
+                            $brother['name'] ?? null
+                        );
+                    }
+
+                    // Process sisters
+                    foreach ($maternalSisters['names'] as $index => $sister) {
+                        $label = $this->addOrdinalToLabel(
+                            $maternalSisters['label'] ?? 'বৈপিত্রেয় বোন',
+                            $index
+                        );
+                        $this->addShare(
+                            $label,
+                            $partValue * 1,
+                            $sister['name'] ?? null
+                        );
+                    }
+
+                    $this->remainingShare -= $totalShare;
+                }
             }
         }
     }
@@ -214,8 +330,9 @@ class InheritanceCalculator
             if ($wifeCount > 0) {
                 $share = $hasChildren ? 1 / 8 : 1 / 4;
                 $individualShare = $share / $wifeCount;
-                foreach ($this->data['heirs']['spouseWives']['names'] as $wife) {
-                    $this->addShare($wife['name'], $individualShare, $wife['name']);
+                foreach ($this->data['heirs']['spouseWives']['names'] as $index => $wife) {
+                    $label = $this->addOrdinalToLabel("মৃত ব্যক্তির জীবিত স্ত্রী", $index);
+                    $this->addShare($label, $individualShare, $wife['name']);
                 }
                 $this->remainingShare -= $share;
             }
@@ -223,7 +340,7 @@ class InheritanceCalculator
             // Husband's share
             if ($this->data['heirs']['spouseStatus'] === 'alive') {
                 $share = $hasChildren ? 1 / 4 : 1 / 2;
-                $this->addShare('মৃত ব্যক্তির স্বামী', $share, $this->data['heirs']['spouseName']);
+                $this->addShare('মৃত ব্যক্তির জীবিত স্বামী', $share, $this->data['heirs']['spouseName']);
                 $this->remainingShare -= $share;
             }
         }
@@ -296,13 +413,15 @@ class InheritanceCalculator
         $partValue = $this->remainingShare / $totalParts;
 
         // Distribute to alive sons (2 parts each)
-        foreach ($this->data['heirs']['children']['aliveSons']['names'] as $son) {
-            $this->addShare($this->data['heirs']['children']['aliveSons']['label'], $partValue * 2, $son['name']);
+        foreach ($this->data['heirs']['children']['aliveSons']['names'] as $index => $son) {
+            $label = $this->addOrdinalToLabel($this->data['heirs']['children']['aliveSons']['label'], $index);
+            $this->addShare($label, $partValue * 2, $son['name']);
         }
 
         // Distribute to alive daughters (1 part each)
-        foreach ($this->data['heirs']['children']['aliveDaughters']['names'] as $daughter) {
-            $this->addShare($this->data['heirs']['children']['aliveDaughters']['label'], $partValue, $daughter['name']);
+        foreach ($this->data['heirs']['children']['aliveDaughters']['names'] as $index => $daughter) {
+            $label = $this->addOrdinalToLabel($this->data['heirs']['children']['aliveDaughters']['label'], $index);
+            $this->addShare($label, $partValue, $daughter['name']);
         }
 
         // Distribute to deceased sons' children
@@ -310,18 +429,20 @@ class InheritanceCalculator
             $totalChildParts = ($deceasedSon['sonsCount'] * 2) + $deceasedSon['daughtersCount'];
             if ($totalChildParts === 0) continue;
 
-            $deceasedSonShare = $partValue * 2; // 2 parts for each deceased son
+            $deceasedSonShare = $partValue * 2;
 
             // Sons of deceased son
-            foreach ($deceasedSon['sonsNames'] as $grandson) {
+            foreach ($deceasedSon['sonsNames'] as $sonIndex => $grandson) {
                 $share = ($deceasedSonShare * 2) / $totalChildParts;
-                $this->addShare($grandson['label'], $share, $grandson['name']);
+                $label = $this->addOrdinalToLabel("মৃত ছেলের ছেলে", $sonIndex);
+                $this->addShare($label, $share, $grandson['name'] ?? null);
             }
 
             // Daughters of deceased son
-            foreach ($deceasedSon['daughtersNames'] as $granddaughter) {
+            foreach ($deceasedSon['daughtersNames'] as $daughterIndex => $granddaughter) {
                 $share = $deceasedSonShare / $totalChildParts;
-                $this->addShare($granddaughter['label'], $share, $granddaughter['name']);
+                $label = $this->addOrdinalToLabel("মৃত ছেলের মেয়ে", $daughterIndex);
+                $this->addShare($label, $share, $granddaughter['name'] ?? null);
             }
         }
 
@@ -330,19 +451,20 @@ class InheritanceCalculator
             $totalChildParts = ($deceasedDaughter['sonsCount'] * 2) + $deceasedDaughter['daughtersCount'];
             if ($totalChildParts === 0) continue;
 
-            // Deceased daughter’s share (1 part, as daughters get 1 part in residue)
             $deceasedDaughterShare = $partValue * 1;
 
-            // Sons of deceased daughter (2:1 ratio)
-            foreach ($deceasedDaughter['sonsNames'] as $grandson) {
+            // Sons of deceased daughter
+            foreach ($deceasedDaughter['sonsNames'] as $sonIndex => $grandson) {
                 $share = ($deceasedDaughterShare * 2) / $totalChildParts;
-                $this->addShare($grandson['label'], $share, $grandson['name']);
+                $label = $this->addOrdinalToLabel("মৃত মেয়ের ছেলে", $sonIndex);
+                $this->addShare($label, $share, $grandson['name'] ?? null);
             }
 
             // Daughters of deceased daughter
-            foreach ($deceasedDaughter['daughtersNames'] as $granddaughter) {
+            foreach ($deceasedDaughter['daughtersNames'] as $daughterIndex => $granddaughter) {
                 $share = $deceasedDaughterShare / $totalChildParts;
-                $this->addShare($granddaughter['label'], $share, $granddaughter['name']);
+                $label = $this->addOrdinalToLabel("মৃত মেয়ের মেয়ে", $daughterIndex);
+                $this->addShare($label, $share, $granddaughter['name'] ?? null);
             }
         }
     }
@@ -363,39 +485,75 @@ class InheritanceCalculator
 
     private function distributeResidueToFullSiblings()
     {
-        // Alive brothers/sisters
-        $aliveBrothers = $this->data['heirs']['siblings']['brothers']['count'] ?? 0;
-        $aliveSisters = $this->data['heirs']['siblings']['sisters']['count'] ?? 0;
+        $brothersData = $this->data['heirs']['siblings']['brothers'] ?? [];
+        $sistersData = $this->data['heirs']['siblings']['sisters'] ?? [];
 
-        // Deceased brothers with sons (assuming data structure supports this)
+        // Alive brothers/sisters
+        $aliveBrothersCount = $brothersData['count'] ?? 0;
+        $aliveSistersCount = $sistersData['count'] ?? 0;
+
+        // Deceased brothers with sons
         $deceasedBrothersWithSons = array_filter(
-            $this->data['heirs']['siblings']['deceasedBrothers'] ?? [],
+            $brothersData['deceasedBrothers'] ?? [],
             fn($brother) => ($brother['sonsCount'] ?? 0) > 0
         );
 
-        $effectiveBrothers = $aliveBrothers + count($deceasedBrothersWithSons);
-        $effectiveSisters = $aliveSisters;
+        $effectiveBrothers = $aliveBrothersCount + count($deceasedBrothersWithSons);
+        $effectiveSisters = $aliveSistersCount;
+
+        if ($effectiveBrothers + $effectiveSisters === 0) {
+            return;
+        }
 
         $totalParts = ($effectiveBrothers * 2) + $effectiveSisters;
         $partValue = $this->remainingShare / $totalParts;
 
         // Alive brothers
-        foreach ($this->data['heirs']['siblings']['brothers']['names'] as $brother) {
-            $this->addShare($brother['label'], $partValue * 2, $brother['name']);
+        foreach (array_slice($brothersData['names'] ?? [], 0, $aliveBrothersCount) as $index => $brother) {
+            $label = $this->addOrdinalToLabel(
+                $brothersData['label'] ?? 'সহোদর ভাই',
+                $index
+            );
+            $this->addShare(
+                $label,
+                $partValue * 2,
+                $brother['name'] ?? null
+            );
         }
 
-        // Deceased brothers' sons (inherit their father’s share)
+        // Deceased brothers' sons
         foreach ($deceasedBrothersWithSons as $deceasedBrother) {
-            $totalSonsParts = $deceasedBrother['sonsCount'] * 2;
-            $sharePerSon = ($partValue * 2) / $totalSonsParts;
-            foreach ($deceasedBrother['sonsNames'] as $son) {
-                $this->addShare($son['label'], $sharePerSon, $son['name']);
+            $sonsCount = $deceasedBrother['sonsCount'] ?? 0;
+            $totalSonsParts = $sonsCount * 2;
+
+            if ($totalSonsParts > 0) {
+                $sharePerSon = ($partValue * 2) / $totalSonsParts;
+
+                foreach (array_slice($deceasedBrother['sonsNames'] ?? [], 0, $sonsCount) as $sonIndex => $son) {
+                    $label = $this->addOrdinalToLabel(
+                        'মৃত ভাইয়ের ছেলে',
+                        $sonIndex
+                    );
+                    $this->addShare(
+                        $label,
+                        $sharePerSon,
+                        $son['name'] ?? null
+                    );
+                }
             }
         }
 
         // Alive sisters
-        foreach ($this->data['heirs']['siblings']['sisters']['names'] as $sister) {
-            $this->addShare($sister['label'], $partValue, $sister['name']);
+        foreach (array_slice($sistersData['names'] ?? [], 0, $aliveSistersCount) as $index => $sister) {
+            $label = $this->addOrdinalToLabel(
+                $sistersData['label'] ?? 'সহোদর বোন',
+                $index
+            );
+            $this->addShare(
+                $label,
+                $partValue,
+                $sister['name'] ?? null
+            );
         }
 
         $this->remainingShare = 0;
@@ -408,7 +566,7 @@ class InheritanceCalculator
 
         // Check deceased half-brothers with sons
         $deceasedHalfBrothersWithSons = array_filter(
-            $this->data['heirs']['otherRelatives']['deceasedPaternalHalfBrothers'] ?? [],
+            $this->data['heirs']['otherRelatives']['paternalHalfBrother']['deceased'] ?? [],
             fn($brother) => ($brother['sonsCount'] ?? 0) > 0
         );
 
@@ -417,41 +575,79 @@ class InheritanceCalculator
 
     private function distributeResidueToPaternalHalfSiblings()
     {
-        $aliveHalfBrothers = $this->data['heirs']['otherRelatives']['paternalHalfBrother']['count'] ?? 0;
-        $aliveHalfSisters = $this->data['heirs']['otherRelatives']['paternalHalfSister']['count'] ?? 0;
+        $halfBrotherData = $this->data['heirs']['otherRelatives']['paternalHalfBrother'] ?? [];
+        $halfSisterData = $this->data['heirs']['otherRelatives']['paternalHalfSister'] ?? [];
 
+        $aliveHalfBrothersCount = $halfBrotherData['count'] ?? 0;
+        $aliveHalfSistersCount = $halfSisterData['count'] ?? 0;
+
+        // Deceased half-brothers with sons
         $deceasedHalfBrothersWithSons = array_filter(
-            $this->data['heirs']['otherRelatives']['deceasedPaternalHalfBrothers'] ?? [],
+            $halfBrotherData['deceased'] ?? [],
             fn($brother) => ($brother['sonsCount'] ?? 0) > 0
         );
 
-        $effectiveHalfBrothers = $aliveHalfBrothers + count($deceasedHalfBrothersWithSons);
-        $effectiveHalfSisters = $aliveHalfSisters;
+        $effectiveHalfBrothers = $aliveHalfBrothersCount + count($deceasedHalfBrothersWithSons);
+        $effectiveHalfSisters = $aliveHalfSistersCount;
+
+        if ($effectiveHalfBrothers + $effectiveHalfSisters === 0) {
+            return;
+        }
 
         $totalParts = ($effectiveHalfBrothers * 2) + $effectiveHalfSisters;
         $partValue = $this->remainingShare / $totalParts;
 
         // Alive paternal half-brothers
-        foreach ($this->data['heirs']['otherRelatives']['paternalHalfBrother']['names'] as $brother) {
-            $this->addShare($brother['label'], $partValue * 2, $brother['name']);
+        foreach (array_slice($halfBrotherData['names'] ?? [], 0, $aliveHalfBrothersCount) as $index => $brother) {
+            $label = $this->addOrdinalToLabel(
+                $halfBrotherData['label'] ?? 'বৈমাতৃয় ভাই',
+                $index
+            );
+            $this->addShare(
+                $label,
+                $partValue * 2,
+                $brother['name'] ?? null
+            );
         }
 
         // Deceased half-brothers' sons
         foreach ($deceasedHalfBrothersWithSons as $deceasedBrother) {
-            $totalSonsParts = $deceasedBrother['sonsCount'] * 2;
-            $sharePerSon = ($partValue * 2) / $totalSonsParts;
-            foreach ($deceasedBrother['sonsNames'] as $son) {
-                $this->addShare($son['label'], $sharePerSon, $son['name']);
+            $sonsCount = $deceasedBrother['sonsCount'] ?? 0;
+            $totalSonsParts = $sonsCount * 2;
+
+            if ($totalSonsParts > 0) {
+                $sharePerSon = ($partValue * 2) / $totalSonsParts;
+
+                foreach (array_slice($deceasedBrother['sonsNames'] ?? [], 0, $sonsCount) as $sonIndex => $son) {
+                    $label = $this->addOrdinalToLabel(
+                        'মৃত বৈমাতৃয় ভাইয়ের ছেলে',
+                        $sonIndex
+                    );
+                    $this->addShare(
+                        $label,
+                        $sharePerSon,
+                        $son['name'] ?? null
+                    );
+                }
             }
         }
 
         // Alive paternal half-sisters
-        foreach ($this->data['heirs']['otherRelatives']['paternalHalfSister']['names'] as $sister) {
-            $this->addShare($sister['label'], $partValue, $sister['name']);
+        foreach (array_slice($halfSisterData['names'] ?? [], 0, $aliveHalfSistersCount) as $index => $sister) {
+            $label = $this->addOrdinalToLabel(
+                $halfSisterData['label'] ?? 'বৈমাতৃয় বোন',
+                $index
+            );
+            $this->addShare(
+                $label,
+                $partValue,
+                $sister['name'] ?? null
+            );
         }
 
         $this->remainingShare = 0;
     }
+
     private function hasFullPaternalUnclesOrDescendants()
     {
         $paternalUncle = $this->data['heirs']['otherRelatives']['paternalUncle'] ?? [];
@@ -483,33 +679,57 @@ class InheritanceCalculator
         $remaining = $this->remainingShare;
 
         // Case 1: Alive paternal uncles
-        if (($paternalUncle['count'] ?? 0) > 0) {
-            $aliveUncles = $paternalUncle['count'];
-            $sharePerUncle = $remaining / $aliveUncles;
-            foreach ($paternalUncle['names'] as $uncle) {
-                $this->addShare($uncle['label'], $sharePerUncle, $uncle['name']);
+        $aliveCount = $paternalUncle['count'] ?? 0;
+        if ($aliveCount > 0) {
+            $sharePerUncle = $remaining / $aliveCount;
+            foreach (array_slice($paternalUncle['names'] ?? [], 0, $aliveCount) as $index => $uncle) {
+                $label = $this->addOrdinalToLabel(
+                    $paternalUncle['label'] ?? 'চাচা',
+                    $index
+                );
+                $this->addShare(
+                    $label,
+                    $sharePerUncle,
+                    $uncle['name'] ?? null
+                );
             }
             $this->remainingShare = 0;
             return;
         }
 
         // Case 2: Deceased uncles with living sons
-        if (($paternalUncle['hasSons'] ?? 'no') === 'yes' && ($paternalUncle['sonsCount'] ?? 0) > 0) {
-            $sonsCount = $paternalUncle['sonsCount'];
+        $sonsCount = $paternalUncle['sonsCount'] ?? 0;
+        if (($paternalUncle['hasSons'] ?? 'no') === 'yes' && $sonsCount > 0) {
             $sharePerSon = $remaining / $sonsCount;
-            foreach ($paternalUncle['sonsNames'] as $son) {
-                $this->addShare($son['label'], $sharePerSon, $son['name']);
+            foreach (array_slice($paternalUncle['sonsNames'] ?? [], 0, $sonsCount) as $index => $son) {
+                $label = $this->addOrdinalToLabel(
+                    'মৃত চাচার ছেলে',
+                    $index
+                );
+                $this->addShare(
+                    $label,
+                    $sharePerSon,
+                    $son['name'] ?? null
+                );
             }
             $this->remainingShare = 0;
             return;
         }
 
         // Case 3: Deceased uncles' grandsons
-        if (($paternalUncle['hasGrandsons'] ?? 'no') === 'yes' && ($paternalUncle['grandsonsCount'] ?? 0) > 0) {
-            $grandsonsCount = $paternalUncle['grandsonsCount'];
+        $grandsonsCount = $paternalUncle['grandsonsCount'] ?? 0;
+        if (($paternalUncle['hasGrandsons'] ?? 'no') === 'yes' && $grandsonsCount > 0) {
             $sharePerGrandson = $remaining / $grandsonsCount;
-            foreach ($paternalUncle['grandsonsNames'] as $grandson) {
-                $this->addShare($grandson['label'], $sharePerGrandson, $grandson['name']);
+            foreach (array_slice($paternalUncle['grandsonsNames'] ?? [], 0, $grandsonsCount) as $index => $grandson) {
+                $label = $this->addOrdinalToLabel(
+                    'মৃত চাচার নাতি',
+                    $index
+                );
+                $this->addShare(
+                    $label,
+                    $sharePerGrandson,
+                    $grandson['name'] ?? null
+                );
             }
             $this->remainingShare = 0;
             return;
@@ -521,33 +741,57 @@ class InheritanceCalculator
         $remaining = $this->remainingShare;
 
         // Case 1: Alive half-uncles
-        if (($halfUncle['count'] ?? 0) > 0) {
-            $aliveUncles = $halfUncle['count'];
-            $sharePerUncle = $remaining / $aliveUncles;
-            foreach ($halfUncle['names'] as $uncle) {
-                $this->addShare($uncle['label'], $sharePerUncle, $uncle['name']);
+        $aliveCount = $halfUncle['count'] ?? 0;
+        if ($aliveCount > 0) {
+            $sharePerUncle = $remaining / $aliveCount;
+            foreach (array_slice($halfUncle['names'] ?? [], 0, $aliveCount) as $index => $uncle) {
+                $label = $this->addOrdinalToLabel(
+                    $halfUncle['label'] ?? 'বৈমাতৃয় চাচা',
+                    $index
+                );
+                $this->addShare(
+                    $label,
+                    $sharePerUncle,
+                    $uncle['name'] ?? null
+                );
             }
             $this->remainingShare = 0;
             return;
         }
 
         // Case 2: Deceased half-uncles with sons
-        if (($halfUncle['hasSons'] ?? 'no') === 'yes' && ($halfUncle['sonsCount'] ?? 0) > 0) {
-            $sonsCount = $halfUncle['sonsCount'];
+        $sonsCount = $halfUncle['sonsCount'] ?? 0;
+        if (($halfUncle['hasSons'] ?? 'no') === 'yes' && $sonsCount > 0) {
             $sharePerSon = $remaining / $sonsCount;
-            foreach ($halfUncle['sonsNames'] as $son) {
-                $this->addShare($son['label'], $sharePerSon, $son['name']);
+            foreach (array_slice($halfUncle['sonsNames'] ?? [], 0, $sonsCount) as $index => $son) {
+                $label = $this->addOrdinalToLabel(
+                    'মৃত বৈমাতৃয় চাচার ছেলে',
+                    $index
+                );
+                $this->addShare(
+                    $label,
+                    $sharePerSon,
+                    $son['name'] ?? null
+                );
             }
             $this->remainingShare = 0;
             return;
         }
 
         // Case 3: Deceased half-uncles' grandsons
-        if (($halfUncle['hasGrandsons'] ?? 'no') === 'yes' && ($halfUncle['grandsonsCount'] ?? 0) > 0) {
-            $grandsonsCount = $halfUncle['grandsonsCount'];
+        $grandsonsCount = $halfUncle['grandsonsCount'] ?? 0;
+        if (($halfUncle['hasGrandsons'] ?? 'no') === 'yes' && $grandsonsCount > 0) {
             $sharePerGrandson = $remaining / $grandsonsCount;
-            foreach ($halfUncle['grandsonsNames'] as $grandson) {
-                $this->addShare($grandson['label'], $sharePerGrandson, $grandson['name']);
+            foreach (array_slice($halfUncle['grandsonsNames'] ?? [], 0, $grandsonsCount) as $index => $grandson) {
+                $label = $this->addOrdinalToLabel(
+                    'মৃত বৈমাতৃয় চাচার নাতি',
+                    $index
+                );
+                $this->addShare(
+                    $label,
+                    $sharePerGrandson,
+                    $grandson['name'] ?? null
+                );
             }
             $this->remainingShare = 0;
             return;
@@ -680,5 +924,36 @@ class InheritanceCalculator
             }
         }
         return $total;
+    }
+
+    // Add this method to your class
+    private function addOrdinalToLabel(string $baseLabel, int $index): string
+    {
+        $ordinals = [
+            '১ম জন',
+            '২য় জন',
+            '৩য় জন',
+            '৪র্থ জন',
+            '৫ম জন',
+            '৬ষ্ঠ জন',
+            '৭ম জন',
+            '৮ম জন',
+            '৯ম জন',
+            '১০ম জন',
+            '১১তম জন',
+            '১২তম জন',
+            '১৩তম জন',
+            '১৪তম জন',
+            '১৫তম জন',
+            '১৬তম জন',
+            '১৭তম জন',
+            '১৮তম জন',
+            '১৯তম জন',
+            '২০তম জন'
+        ];
+
+        $ordinal = $ordinals[$index] ?? ($index + 1) . 'তম জন';
+
+        return "$baseLabel - $ordinal";
     }
 }

@@ -1520,10 +1520,10 @@
                     // Define heirarchy of dependency - higher priority heirs disable lower ones
                     const dependencyMap = {
                         maternalHalfBrother: ['hasSons', 'hasDeceasedSonsChildren', 'hasFatherOrGrandfather',
-                            'brothersCount'
+
                         ],
                         maternalHalfSister: ['hasSons', 'hasDeceasedSonsChildren', 'hasFatherOrGrandfather',
-                            'brothersCount'
+
                         ],
                         paternalHalfBrother: ['hasSons', 'hasDeceasedSonsChildren', 'hasFatherOrGrandfather',
                             'brothersCount'
