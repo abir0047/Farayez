@@ -34,6 +34,7 @@ Route::get('/inheritance-results', function () {
     return view('inheritance-results', [
         'shares' => session('results', []),
         'assets' => session('assets', []),
-        'totalEstate' => session('totalEstate', 0)
+        'totalEstate' => session('totalEstate', 0),
+        'deceasedInfo' => session('calculator_data.deceasedInfo', []),
     ]);
 })->name('inheritance.results');

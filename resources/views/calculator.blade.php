@@ -1643,12 +1643,31 @@
                     return bengaliNumbers[num - 1] || num;
                 },
 
+                getProcessedFormData() {
+                    const processedData = JSON.parse(JSON.stringify(this.formData));
+                    const deceasedName = this.formData.deceasedInfo.name || 'মৃত ব্যক্তির';
+
+                    // Recursive function to replace labels
+                    const replaceLabels = (obj) => {
+                        if (typeof obj !== 'object' || obj === null) return;
+
+                        for (const key in obj) {
+                            if (key === 'label' && typeof obj[key] === 'string') {
+                                obj[key] = obj[key].replace(/মৃত ব্যক্তির/g, `${deceasedName}-এর`);
+                            }
+                            if (typeof obj[key] === 'object') {
+                                replaceLabels(obj[key]);
+                            }
+                        }
+                    };
+
+                    replaceLabels(processedData);
+                    return processedData;
+                },
+
                 submitForm() {
 
-                    console.log("Before Sending:", this.formData);
-
-                    // Convert the Proxy object to a plain JavaScript object
-                    const formData = JSON.parse(JSON.stringify(this.formData));
+                    const formData = this.getProcessedFormData();
 
                     // Add version tracking
                     this.formData.version = this.formData.version ?

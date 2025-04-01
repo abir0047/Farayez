@@ -67,7 +67,7 @@
         </footer>
     </div>
 
-    {{-- <script>
+    <script>
         const {
             createApp
         } = Vue;
@@ -83,7 +83,7 @@
                 }
             }
         }).mount("#app");
-    </script> --}}
+    </script>
 </body>
 
 </html>
