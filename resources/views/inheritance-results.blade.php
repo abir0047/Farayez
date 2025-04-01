@@ -41,6 +41,7 @@
                     <tr>
                         <th class="p-2 border">সম্পর্ক</th>
                         <th class="p-2 border">নাম</th>
+                        <th class="p-2 border">শেয়ারের ভগ্নাংশ</th>
                         <th class="p-2 border">শেয়ারের পরিমাণ</th>
                         @foreach ($assets as $asset)
                             <th class="p-2 border relative group">
@@ -58,7 +59,15 @@
                         <tr class="text-center border">
                             <td class="p-2 border">{{ $share['relation'] }}</td>
                             <td class="p-2 border">{{ $share['name'] ?? 'N/A' }}</td>
-                            <td class="p-2 border">{{ number_format($share['share_fraction'] * 100, 2) }}</td>
+                            <td class="p-2 border">
+                                {{ $share['numerator'] }}/{{ $share['denominator'] }}
+                                @if (isset($share['common_denominator']))
+                                    <br><span class="text-xs text-gray-600">(সাধারণ হর:
+                                        {{ $share['common_denominator'] }})</span>
+                                @endif
+                            </td>
+                            <td class="p-2 border">{{ number_format(($share['numerator'] / $share['denominator']) * 100, 2) }}
+                            </td>
                             @foreach ($assets as $assetKey => $asset)
                                 <td class="p-2 border">
                                     {{ number_format($asset['shares'][$index]['amount'], 2) }}
@@ -117,13 +126,13 @@
             const chartData = {
                 labels: shares.map(share => {
                     const displayName = share.name || share.relation;
-                    return `${displayName} (${(share.share_fraction * 100).toFixed(2)}%)`;
+                    return `${displayName} (${share.numerator}/${share.denominator})`;
                 }),
                 datasets: [{
-                    data: shares.map(share => share.share_fraction),
+                    data: shares.map(share => share.numerator / share.denominator),
                     backgroundColor: generateColors(shares.length),
                     borderWidth: 2,
-                    hoverOffset: 15, // This makes slices "pop out" on hover
+                    hoverOffset: 15,
                     hoverBorderWidth: 3,
                     hoverBorderColor: '#ffffff'
                 }]
@@ -167,12 +176,12 @@
                                 label: function(context) {
                                     const share = shares[context.dataIndex];
                                     const displayName = share.name || share.relation;
-                                    const percentage = (context.parsed * 100).toFixed(2) + '%';
+                                    const fraction = `${share.numerator}/${share.denominator}`;
                                     const amount = (totalEstate * context.parsed).toLocaleString(
                                         'en-BD') + ' টাকা';
                                     return [
                                         displayName,
-                                        `শেয়ার: ${percentage}`,
+                                        `শেয়ার: ${fraction}`,
                                         // `পরিমাণ: ${amount}`
                                     ];
                                 }
