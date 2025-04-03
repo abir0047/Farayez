@@ -11,29 +11,13 @@
 
         <!-- ধাপভিত্তিক কার্ড (স্ট্যাটিক) -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
-            <div v-for="(btn, index) in buttons" :key="index"
-                class="p-2 md:p-3 text-xs md:text-sm text-center font-medium rounded-lg transition-all"
+            <div v-for="(btn, index) in buttons" :key="index" @click="activeTab = index"
+                class="p-2 md:p-3 text-xs md:text-sm text-center font-medium rounded-lg transition-all cursor-pointer hover:bg-blue-800 hover:text-white"
                 :class="activeTab === index ?
                     'bg-blue-900 text-white shadow-md' :
-                    'bg-gray-100 text-gray-500 border border-gray-300'">
+                    'bg-gray-100 text-gray-500 border border-gray-300 hover:border-blue-900'">
                 @{{ btn.label }}
             </div>
-        </div>
-
-        <!-- নেভিগেশন বাটন -->
-        <div class="flex justify-between gap-2 mb-6">
-            <button @click="prevStep" class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors"
-                :class="activeTab === 0 ?
-                    'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed' :
-                    'bg-blue-900 text-white hover:bg-blue-800 border-blue-900'">
-                &lt; পূর্ববর্তী
-            </button>
-            <button @click="nextStep" class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors"
-                :class="activeTab === buttons.length - 1 ?
-                    'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed' :
-                    'bg-blue-900 text-white hover:bg-blue-800 border-blue-900'">
-                পরবর্তী &gt;
-            </button>
         </div>
 
         <!-- সক্রিয় ধাপ অনুযায়ী কন্টেন্ট -->
@@ -1014,6 +998,22 @@
                 </div>
             </template>
 
+        </div>
+
+        <!-- নেভিগেশন বাটন -->
+        <div class="flex justify-between gap-2 mt-6">
+            <button @click="prevStep" class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors"
+                :class="activeTab === 0 ?
+                    'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed' :
+                    'bg-blue-900 text-white hover:bg-blue-800 border-blue-900'">
+                &lt; পূর্ববর্তী
+            </button>
+            <button @click="nextStep" class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors"
+                :class="activeTab === buttons.length - 1 ?
+                    'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed' :
+                    'bg-blue-900 text-white hover:bg-blue-800 border-blue-900'">
+                পরবর্তী &gt;
+            </button>
         </div>
 
     </div>
