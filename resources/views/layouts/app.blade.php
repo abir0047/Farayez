@@ -8,6 +8,7 @@
     <title>ফারায়েজ</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/vue@3"></script>
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN2SM6JRZ2"></script>
     <script>
@@ -17,13 +18,14 @@
             dataLayer.push(arguments);
         }
         gtag('js', new Date());
-
         gtag('config', 'G-YN2SM6JRZ2');
     </script>
 </head>
 
 <body class="bg-white text-gray-900">
-    <div id="app">
+
+    <!-- Vue App for Layout (Navigation only) -->
+    <div id="layout-app">
         <header class="bg-blue-900 text-white py-4">
             <div class="container mx-auto px-4 flex justify-between items-center">
                 <a href="{{ route('home') }}">
@@ -67,17 +69,18 @@
                 </div>
             </div>
         </header>
-
-        <main class="min-h-screen flex flex-col">
-            @yield('content')
-        </main>
-
-        <footer class="bg-gray-900 text-white py-6">
-            <div class="container mx-auto text-center">
-                <p>Copyright &copy; 2025</p>
-            </div>
-        </footer>
     </div>
+
+    <!-- Main Content Outside Vue App -->
+    <main class="min-h-screen flex flex-col">
+        @yield('content')
+    </main>
+
+    <footer class="bg-gray-900 text-white py-6">
+        <div class="container mx-auto text-center">
+            <p>Copyright &copy; 2025</p>
+        </div>
+    </footer>
 
     <script>
         Vue.createApp({
@@ -91,7 +94,7 @@
                     this.isMobileMenuOpen = !this.isMobileMenuOpen;
                 }
             }
-        }).mount("#app");
+        }).mount("#layout-app");
     </script>
 </body>
 
