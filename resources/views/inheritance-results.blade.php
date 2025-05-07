@@ -22,7 +22,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6 p-4 border rounded-lg bg-gray-100 text-sm sm:text-base">
             @foreach ($assets as $asset)
-                <div>{{ $asset['name'] }}: {{ number_format($asset['value']) }} {{ $asset['unit'] }}</div>
+                <div>{{ $asset['name'] }}: {{ banglaNumber(number_format($asset['value'])) }} {{ $asset['unit'] }}</div>
             @endforeach
         </div>
 
@@ -60,17 +60,18 @@
                             <td class="p-2 border">{{ $share['relation'] }}</td>
                             <td class="p-2 border">{{ $share['name'] ?? 'N/A' }}</td>
                             <td class="p-2 border">
-                                {{ $share['numerator'] }}/{{ $share['denominator'] }}
+                                {{ banglaNumber($share['common_numerator']) }}/{{ banglaNumber($share['common_denominator']) }}
                                 @if (isset($share['common_denominator']))
-                                    <br><span class="text-xs text-gray-600">(সাধারণ হর:
-                                        {{ $share['common_denominator'] }})</span>
+                                    <br><span class="text-xs text-gray-600">(সরলীকরণ:
+                                        {{ banglaNumber($share['numerator']) }}/{{ banglaNumber($share['denominator']) }})</span>
                                 @endif
                             </td>
-                            <td class="p-2 border">{{ number_format(($share['numerator'] / $share['denominator']) * 100, 2) }}
+                            <td class="p-2 border">
+                                {{ banglaNumber(number_format(($share['numerator'] / $share['denominator']) * 100, 2)) }}%
                             </td>
                             @foreach ($assets as $assetKey => $asset)
                                 <td class="p-2 border">
-                                    {{ number_format($asset['shares'][$index]['amount'], 2) }}
+                                    {{ banglaNumber(number_format($asset['shares'][$index]['amount'], 2)) }}
                                 </td>
                             @endforeach
                         </tr>
@@ -84,7 +85,7 @@
             <p class="mb-4">
                 সার্বিক সহযোগিতায়<br>
                 <span class="font-semibold">অ্যাডভোকেট চৌধুরী তানবীর আহমেদ ছিদ্দিক</span><br>
-                মোবাইলঃ 01882-689299 | ই-মেইলঃ tanbiradvocate@gmail.com
+                মোবাইলঃ ০১৮৮২-৬৮৯২৯৯ | ই-মেইলঃ tanbiradvocate@gmail.com
             </p>
         </div>
 
@@ -103,7 +104,6 @@
         </div>
     </div>
 
-
     <!-- Add Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -111,6 +111,13 @@
             const shares = @json($shares);
             const assets = @json($assets);
             const totalEstate = @json($totalEstate);
+
+            // Convert English numbers to Bangla
+            function toBanglaNumber(number) {
+                const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                const bangla = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                return number.toString().split('').map(digit => bangla[english.indexOf(digit)]).join('');
+            }
 
             // Generate dynamic colors
             const generateColors = (count) => {
@@ -126,7 +133,7 @@
             const chartData = {
                 labels: shares.map(share => {
                     const displayName = share.name || share.relation;
-                    return `${displayName} (${share.numerator}/${share.denominator})`;
+                    return `${displayName} (${toBanglaNumber(share.numerator)}/${toBanglaNumber(share.denominator)})`;
                 }),
                 datasets: [{
                     data: shares.map(share => share.numerator / share.denominator),
@@ -155,7 +162,6 @@
                                 font: {
                                     size: 14
                                 },
-                                // Show relation if name is null in legend
                                 generateLabels: function(chart) {
                                     const data = chart.data;
                                     return data.labels.map((label, i) => {
@@ -176,20 +182,21 @@
                                 label: function(context) {
                                     const share = shares[context.dataIndex];
                                     const displayName = share.name || share.relation;
-                                    const fraction = `${share.numerator}/${share.denominator}`;
-                                    const amount = (totalEstate * context.parsed).toLocaleString(
-                                        'en-BD') + ' টাকা';
+                                    const fraction =
+                                        `${toBanglaNumber(share.numerator)}/${toBanglaNumber(share.denominator)}`;
+                                    const amount = toBanglaNumber((totalEstate * context.parsed)
+                                        .toFixed(2));
                                     return [
                                         displayName,
                                         `শেয়ার: ${fraction}`,
-                                        // `পরিমাণ: ${amount}`
+                                        // `পরিমাণ: ${amount} টাকা`
                                     ];
                                 }
                             }
                         },
                         title: {
                             display: true,
-                            // text: `মোট সম্পত্তির পরিমাণ: ${totalEstate.toLocaleString()} টাকা`,
+                            // text: `মোট সম্পত্তির পরিমাণ: ${toBanglaNumber(totalEstate.toLocaleString('en-BD'))} টাকা`,
                             font: {
                                 size: 16
                             }
@@ -199,7 +206,6 @@
                         animateScale: true,
                         animateRotate: true
                     },
-                    // Enhanced hover effects
                     onHover: (event, chartElement) => {
                         if (chartElement.length) {
                             const index = chartElement[0].index;
