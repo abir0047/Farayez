@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+    <!-- Main Calculator Container -->
     <div id="calculator"
         class="w-full max-w-4xl lg:w-[1024px] lg:max-w-none mx-auto p-4 md:p-6 bg-white shadow-lg rounded-lg border border-blue-900 md:my-4"
         data-initial="{{ json_encode($initialData ?? new stdClass()) }}">
         <h2 class="text-lg md:text-xl font-bold text-center mb-6 text-blue-900">
             মুসলিম উত্তরাধিকার আইন অনুযায়ী সম্পত্তি বন্টন
         </h2>
+        <!-- Tab Navigation Buttons -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
             <div v-for="(btn, index) in buttons" :key="index" @click="activeTab = index"
                 class="p-2 md:p-3 text-xs md:text-sm text-center font-medium rounded-lg transition-all cursor-pointer hover:bg-blue-800 hover:text-white"
@@ -15,15 +17,20 @@
                 @{{ btn.label }}
             </div>
         </div>
+        <!-- Tab Content Container -->
         <div class="p-3 md:p-4 bg-white rounded-lg">
+            <!-- Tab 0: Deceased Info Input-->
             <template v-if="activeTab === 0">
+                <!-- Deceased Info Tab: Name, Gender, Death Date, Marital Status -->
                 <div class="grid grid-cols-1 gap-4">
+                    <!-- Name Input -->
                     <div class="space-y-2">
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-blue-900">মৃত ব্যক্তির নাম:</label>
                             <input type="text" v-model="formData.deceasedInfo.name"
                                 class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
                         </div>
+                        <!-- Gender Input -->
                         <div class="space-y-3">
                             <label class="block text-sm font-semibold text-blue-900">মৃত ব্যক্তির লিঙ্গ:</label>
                             <div class="border-2 border-gray-300 rounded-lg p-3 md:p-4 bg-white">
@@ -31,53 +38,62 @@
                                     <label class="flex items-center space-x-3 cursor-pointer group">
                                         <input type="radio" value="male" v-model="formData.deceasedInfo.gender"
                                             class="h-5 w-5 text-blue-900 border-2 border-gray-300 focus:ring-0 focus:border-blue-900 rounded-full transition-all">
-                                        <span
-                                            class="text-gray-700 group-hover:text-blue-900 text-sm md:text-base">পুরুষ</span>
+                                        <span class="text-gray-700 group-hover:text-blue-900 text-sm md:text-base">পুরুষ</span>
                                     </label>
                                     <label class="flex items-center space-x-3 cursor-pointer group">
                                         <input type="radio" value="female" v-model="formData.deceasedInfo.gender"
                                             class="h-5 w-5 text-blue-900 border-2 border-gray-300 focus:ring-0 focus:border-blue-900 rounded-full transition-all">
-                                        <span
-                                            class="text-gray-700 group-hover:text-blue-900 text-sm md:text-base">নারী</span>
+                                        <span class="text-gray-700 group-hover:text-blue-900 text-sm md:text-base">নারী</span>
                                     </label>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="block text-sm font-semibold text-blue-900">মৃত্যুর তারিখ:</label>
-                        <input type="date" v-model="formData.deceasedInfo.deathDate"
-                            class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
-                    </div>
-                    <div class="space-y-3">
-                        <label class="block text-sm font-semibold text-blue-900">মৃত্যুর সময়:</label>
-                        <input type="time" v-model="formData.deceasedInfo.deathTime"
-                            class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
-                    </div>
-                    <div class="space-y-3">
-                        <label class="block text-sm font-semibold text-blue-900">বৈবাহিক অবস্থা:</label>
-                        <select v-model="formData.deceasedInfo.maritalStatus"
-                            class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
-                            <option value="married">বিবাহিত</option>
-                            <option value="unmarried">অবিবাহিত</option>
-                            <option value="divorced">অবিবাহিত কিন্তু তালাকপ্রাপ্ত</option>
-                        </select>
+                        <!-- Deceased Person's Death Date Input -->
+                        <!-- Death Date Input -->
+                        <div class="space-y-3">
+                            <label class="block text-sm font-semibold text-blue-900">মৃত্যুর তারিখ:</label>
+                            <input type="date" v-model="formData.deceasedInfo.deathDate"
+                                class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
+                        </div>
+                        <!-- Death Time Input -->
+                        <div class="space-y-3">
+                            <label class="block text-sm font-semibold text-blue-900">মৃত্যুর সময়:</label>
+                            <input type="time" v-model="formData.deceasedInfo.deathTime"
+                                class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
+                        </div>
+                        <!-- Marital Status Input -->
+                        <div class="space-y-3">
+                            <label class="block text-sm font-semibold text-blue-900">বৈবাহিক অবস্থা:</label>
+                            <select v-model="formData.deceasedInfo.maritalStatus"
+                                class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
+                                <option value="married">বিবাহিত</option>
+                                <option value="unmarried">অবিবাহিত</option>
+                                <option value="divorced">অবিবাহিত কিন্তু তালাকপ্রাপ্ত</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </template>
+            <!-- Tab 1: Assets Input-->
             <template v-if="activeTab === 1">
+                <!-- Asset Entry Tab: v-for over assets -->
                 <div class="grid grid-cols-1 gap-4">
                     <div v-for="(field, key) in formData.assets" :key="key" class="space-y-2">
+                        <!-- Asset Label and Placeholder -->
                         <label class="block text-sm font-semibold text-blue-900">@{{ field.label }}:</label>
                         <span class="text-sm whitespace-nowrap">(@{{ field.placeholder }})</span>
                         <div class="flex items-center gap-2">
+                            <!-- Asset Value Input -->
                             <input type="number" v-model="field.value"
                                 class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
                         </div>
                     </div>
                 </div>
             </template>
+            <!-- Tab 2: Heirs & Relatives Input-->
+            
             <template v-if="activeTab === 2">
+                <!-- Heirs and Relatives Main Section -->
                 <div class="space-y-6">
                     <div class="bg-blue-50 border-l-4 border-blue-900 p-4 rounded-lg shadow-sm">
                         <p class="text-sm text-blue-900">
@@ -118,6 +134,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Spouse Section: Input for wives (if deceased is male) or husband (if deceased is female) -->
                     <div class="bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
                         <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
                             <label class="w-full md:w-1/3 text-sm font-semibold text-blue-900">
@@ -173,6 +190,7 @@
                                         </select>
                                     </div>
                                     <div class="space-y-2">
+                                        <!-- v-for: Input for each alive child's name -->
                                         <div v-for="(member, index) in child.names" :key="index">
                                             <input type="text" v-model="member.name"
                                                 :placeholder="`${replaceDeceasedName(child.label)} ${getBengaliOrdinal(index + 1)} এর নাম`"
@@ -182,6 +200,16 @@
                                 </div>
                             </template>
                         </div>
+                        <!--
+                            Deceased Sons Section:
+                            This section captures the number of deceased sons of the deceased person, their names, and their children (i.e., the deceased's grandchildren through sons).
+
+                            Islamic inheritance law considers the children of deceased sons (grandchildren) as eligible heirs if their father (the son of the deceased) died before the deceased. For each deceased son, the user must input:
+                            - The son's name (for clarity in distribution and for descendant tracking)
+                            - The number and names of his sons (grandsons)
+                            - The number and names of his daughters (granddaughters)
+                            This allows the inheritance logic to properly allocate shares to grandchildren as per the rules.
+                        -->
                         <div class="space-y-6">
                             <div class="bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
                                 <div class="mb-4 pb-2 border-b border-blue-200">
@@ -199,13 +227,18 @@
                                     </div>
                                     <div v-if="formData.heirs.children.deceasedSons.count > 0"
                                         class="space-y-4 ml-4 pl-4 border-l-2 border-blue-200">
+                                        <!--
+                                            v-for: For each deceased son, input his name and collect information about his children (grandsons and granddaughters).
+                                            This loop ensures that each deceased son's descendants are tracked for inheritance calculations.
+                                        -->
                                         <div v-for="(son, index) in formData.heirs.children.deceasedSons.names"
-                                            :key="index" class="space-y-4">
+                                             :key="index" class="space-y-4">
                                             <div class="space-y-2">
                                                 <input type="text" v-model="son.name"
                                                     :placeholder="`মৃত ছেলে ${getBengaliOrdinal(index+1)} এর নাম`"
                                                     class="w-full px-3 py-2 text-sm border border-blue-200 rounded-lg focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
                                             </div>
+                                            <!-- Input for descendants of deceased son -->
                                             <div class="bg-blue-50 p-4 rounded-lg space-y-4">
                                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div class="space-y-2">
@@ -216,6 +249,10 @@
                                                             <option v-for="n in 21" :value="n - 1">
                                                                 @{{ getBanglaNumberLabel(n - 1, 'sons') }}</option>
                                                         </select>
+                                                        <!--
+                                                            v-for: For each deceased son's son (grandson), input his name.
+                                                            Grandsons through deceased sons can inherit if their father (the deceased's son) is not alive at the time of the deceased's death.
+                                                        -->
                                                         <div v-if="son.sonsCount > 0" class="space-y-2 ml-2">
                                                             <div v-for="(grandson, gIndex) in son.sonsNames"
                                                                 :key="gIndex">
@@ -234,6 +271,10 @@
                                                             <option v-for="n in 21" :value="n - 1">
                                                                 @{{ getBanglaNumberLabel(n - 1, 'daughters') }}</option>
                                                         </select>
+                                                        <!--
+                                                            v-for: For each deceased son's daughter (granddaughter), input her name.
+                                                            Granddaughters through deceased sons may also inherit under certain circumstances, especially if there are no surviving sons or grandsons.
+                                                        -->
                                                         <div v-if="son.daughtersCount > 0" class="space-y-2 ml-2">
                                                             <div v-for="(granddaughter, dIndex) in son.daughtersNames"
                                                                 :key="dIndex">
@@ -249,6 +290,16 @@
                                     </div>
                                 </div>
                             </div>
+                            <!--
+                                Deceased Daughters Section:
+                                This section collects the number of deceased daughters, their names, and their children (grandchildren through daughters).
+
+                                Islamic inheritance law may allow the children of deceased daughters (especially grandsons) to inherit if certain conditions are met, such as the absence of direct male descendants. For each deceased daughter, input:
+                                - The daughter's name
+                                - The number and names of her sons (grandsons)
+                                - The number and names of her daughters (granddaughters)
+                                This information is essential for correct inheritance distribution.
+                            -->
                             <div class="bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
                                 <div class="mb-4 pb-2 border-b border-blue-200">
                                     <h3 class="text-sm font-semibold text-blue-900">@{{ replaceDeceasedName('মৃত ব্যক্তির মৃত মেয়ে') }}</h3>
@@ -317,6 +368,16 @@
                                 </div>
                             </div>
                         </div>
+                        <!--
+                            Siblings Section:
+                            This section gathers information about the deceased's siblings (brothers and sisters) and their descendants. In Islamic inheritance law, siblings can inherit if there are no direct male descendants (sons/grandsons). The code tracks:
+                            - Number and names of brothers and sisters.
+                            - For brothers: whether they have sons (nephews) or grandsons (great-nephews), who may inherit if the brother is deceased and the deceased has no direct male descendants.
+
+                            The v-for loops allow dynamic input for each sibling and their descendants. Conditional blocks (v-if/v-else) handle special inheritance scenarios, such as when brothers have no sons, and check for the existence of grandsons.
+
+                            This structure ensures all eligible heirs among siblings and their descendants are captured for correct share calculation.
+                        -->
                         <div class="bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
                             <div class="space-y-4">
                                 <div v-for="(sibling, key) in formData.heirs.siblings" :key="key"
@@ -421,6 +482,16 @@
                             </div>
                         </div>
                     </div>
+                    <!--
+                        Grandparents Section:
+                        This section collects the status (alive/dead) of the deceased's grandparents. According to Islamic inheritance law, grandparents may inherit only if the relevant parent (father or mother) is not alive at the time of the deceased's death. For example:
+                        - The paternal grandfather/grandmother can only inherit if the father is deceased.
+                        - The maternal grandmother can only inherit if the mother is deceased.
+
+                        The :disabled bindings on the radio buttons enforce this rule in the UI, preventing users from selecting a grandparent as alive if the corresponding parent is marked alive.
+
+                        The v-for loop iterates over all grandparent relations, displaying input options for each. This ensures that only eligible grandparents are considered for inheritance calculations.
+                    -->
                     <div class="grid grid-cols-1 md:grid-cols-2 border-t gap-3 md:gap-4 pt-4">
                         <div v-for="(relation, key) in formData.heirs.aliveGrandParentStatus" :key="key"
                             class="flex flex-col gap-2 mb-2">
@@ -457,6 +528,16 @@
                             </div>
                         </div>
                     </div>
+                    <!--
+                        Other Relatives Section:
+                        This section handles additional possible heirs, such as uncles, aunts, or other extended family members. Islamic inheritance law includes these relatives only if there are no closer heirs (like children, siblings, or parents). For each relative, the code:
+                        - Collects the number and names of each type (e.g., paternal uncle, maternal aunt).
+                        - Tracks whether the relative has sons (e.g., cousins) or grandsons, who may inherit if their parent is not alive and there are no closer heirs.
+
+                        The v-for loops allow dynamic input for each relative and their descendants. Conditional v-if/v-else blocks manage special cases, such as asking about sons or grandsons if the primary relative is absent. The :disabled binding ensures only eligible relatives are selectable based on other heir data.
+
+                        This structure ensures the inheritance calculation is comprehensive and compliant with Islamic rules, capturing all possible heirs in complex family scenarios.
+                    -->
                     <div class="bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
                         <div class="space-y-6">
                             <div v-for="(relative, key) in formData.heirs.otherRelatives" :key="key"
@@ -579,9 +660,13 @@
                     </div>
                 </div>
             </template>
+            <!-- Tab 3: Summary of All Data -->
             <template v-if="activeTab === 3">
+            <!-- Summary Tab: Shows all entered and calculated data for final review -->
+            <!-- Summary Tab Main Container -->
                 <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <h3 class="text-lg font-semibold text-blue-900 mb-4">এক নজরে সমস্ত তথ্য</h3>
+                    <!-- Deceased Person Info Summary: Shows name, gender, death date/time, marital status -->
                     <div class="mb-6 bg-white p-4 rounded shadow">
                         <h4 class="font-semibold text-blue-900 mb-3">মৃত ব্যক্তির তথ্য:</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -592,8 +677,10 @@
                             <p><span class="font-medium">বৈবাহিক অবস্থা:</span> @{{ formData.deceasedInfo.maritalStatus === 'married' ? 'বিবাহিত' : (formData.deceasedInfo.maritalStatus === 'unmarried' ? 'অবিবাহিত' : 'তালাকপ্রাপ্ত') }}</p>
                         </div>
                     </div>
+                    <!-- Asset Info Summary: Shows all entered assets using v-for -->
                     <div class="mb-6 bg-white p-4 rounded shadow">
                         <h4 class="font-semibold text-blue-900 mb-3">সম্পত্তির বিবরণ:</h4>
+                        <!-- List all assets with label and value -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div v-for="(asset, key) in formData.assets" :key="key">
                                 <span class="font-medium">@{{ asset.label }}:</span> @{{ asset.value || '0' }}
@@ -601,6 +688,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Heirs Info Summary: Shows parents, siblings, and other relatives using v-for and conditionals -->
                     <div class="bg-white p-4 rounded shadow">
                         <h4 class="font-semibold text-blue-900 mb-3">ওয়ারিশদের তথ্য:</h4>
                         <div class="mb-4">
@@ -755,7 +843,7 @@
                 </div>
             </template>
         </div>
-        <!-- নেভিগেশন বাটন -->
+        <!-- Navigation Buttons -->
         <div class="flex justify-between gap-2 mt-6">
             <button @click="prevStep" class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors"
                 :class="activeTab === 0 ?
