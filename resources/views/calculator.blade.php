@@ -851,6 +851,7 @@
                 };
             },
             methods: {
+                // Validates the form data structure and required fields
                 validateFormData(data) {
                     if (!data.deceasedInfo || !data.heirs) {
                         console.error('Invalid initial data format');
@@ -858,6 +859,8 @@
                     }
                     return true;
                 },
+
+                // Sanitizes form data by converting values to appropriate types
                 sanitizeFormData(data) {
                     Object.values(data.assets).forEach(asset => {
                         asset.value = Number(asset.value) || 0;
@@ -867,6 +870,8 @@
                     });
                     return data;
                 },
+
+                // Merges initial data with default values
                 mergeWithDefaults(initialData) {
                     const defaults = this.initializeFormData();
                     if (!initialData || Object.keys(initialData).length === 0) return defaults;
@@ -885,6 +890,8 @@
                     };
                     return this.sanitizeFormData(sanitized);
                 },
+
+                // Initializes the form data structure with default values
                 initializeFormData() {
                     return {
                         deceasedInfo: this.createDeceasedInfo(),
@@ -892,6 +899,8 @@
                         heirs: this.createHeirs()
                     };
                 },
+
+                // Creates default deceased information structure
                 createDeceasedInfo() {
                     return {
                         name: '',
@@ -901,6 +910,8 @@
                         maritalStatus: 'married'
                     };
                 },
+
+                // Creates default assets structure
                 createAssets() {
                     return {
                         land: this.createAsset('জমির পরিমাণ', 'শতাংশ/কাঠা'),
@@ -908,10 +919,12 @@
                         cash: this.createAsset('নগদ টাকার পরিমাণ', 'ব্যাংক/আর্থিক প্রতিষ্ঠান ভিত্তিত'),
                         investment: this.createAsset('বিনিয়োগের পরিমাণ', 'ব্যাংক/আর্থিক প্রতিষ্ঠান ভিত্তিত'),
                         owedCash: this.createAsset('পাওনা টাকার পরিমাণ', 'ব্যাংক/আর্থিক প্রতিষ্ঠান ভিত্তিত'),
-                        UnpaidDebt: this.createAsset('অপরিশোধিত ঋণ', 'টাকায়'),
+                        unpaidDebt: this.createAsset('অপরিশোধিত ঋণ', 'টাকায়'),
                         jewellery: this.createAsset('অলংকারের পরিমাণ', 'টাকায়'),
                     };
                 },
+
+                // Creates an asset object with label and placeholder
                 createAsset(label, placeholder) {
                     return {
                         label,
@@ -919,6 +932,8 @@
                         placeholder
                     };
                 },
+
+                // Creates the initial heirs data structure with default values
                 createHeirs() {
                     return {
                         spouseWives: {
@@ -941,6 +956,8 @@
                         otherRelatives: this.createOtherRelatives()
                     };
                 },
+
+                // Creates a family member object with label and status
                 createFamilyMember(label, status = 'alive') {
                     return {
                         label,
@@ -948,14 +965,18 @@
                         name: ''
                     };
                 },
+
+                // Creates the children data structure with different categories
                 createChildren() {
                     return {
                         aliveSons: this.createChildCategory('মৃত ব্যক্তির জীবিত ছেলে'),
-                        aliveDaughters: this.createChildCategory('মৃত ব্যক্তির জীবিত মেয়ে'),
+                        aliveDaughters: this.createChildCategory('মৃত ব্যক্তির জীবিত মেয়ে'),
                         deceasedSons: this.createDeceasedChildCategory('মৃত ব্যক্তির মৃত ছেলে'),
-                        deceasedDaughters: this.createDeceasedChildCategory('মৃত ব্যক্তির মৃত মেয়ে')
+                        deceasedDaughters: this.createDeceasedChildCategory('মৃত ব্যক্তির মৃত মেয়ে')
                     };
                 },
+
+                // Creates a child category object with label and count
                 createChildCategory(label) {
                     return {
                         label,
@@ -963,6 +984,8 @@
                         names: []
                     };
                 },
+
+                // Creates a deceased child category with initial entry
                 createDeceasedChildCategory(label) {
                     return {
                         label,
@@ -970,6 +993,8 @@
                         names: [this.createDeceasedChildEntry()]
                     };
                 },
+
+                // Creates a deceased child entry with name and children counts
                 createDeceasedChildEntry() {
                     return {
                         name: '',
@@ -979,12 +1004,16 @@
                         daughtersNames: []
                     };
                 },
+
+                // Creates the siblings data structure
                 createSiblings() {
                     return {
                         brothers: this.createSiblingCategory('মৃত ব্যক্তির সহোদর ভাই'),
                         sisters: this.createSiblingCategory('মৃত ব্যক্তির সহোদর বোন')
                     };
                 },
+
+                // Creates a sibling category with extended properties
                 createSiblingCategory(label) {
                     return {
                         label,
@@ -998,6 +1027,8 @@
                         grandsonsNames: []
                     };
                 },
+
+                // Creates the other relatives data structure
                 createOtherRelatives() {
                     return {
                         maternalHalfBrother: this.createRelative('মৃত ব্যক্তির বৈপিত্রেয় ভাই'),
@@ -1010,6 +1041,8 @@
                         paternalHalfCousin: this.createRelativeWithChildren('মৃত ব্যক্তির বৈমাতৃয় চাচাতো ভাই')
                     };
                 },
+
+                // Creates a basic relative object
                 createRelative(label) {
                     return {
                         label,
@@ -1017,6 +1050,8 @@
                         names: []
                     };
                 },
+
+                // Creates a relative object with children properties
                 createRelativeWithChildren(label) {
                     return {
                         ...this.createRelative(label),
@@ -1028,6 +1063,8 @@
                         grandsonsNames: []
                     };
                 },
+
+                // Creates configuration for relative with question and prefix
                 createRelativeConfig(key, question, prefix) {
                     return {
                         key,
@@ -1040,6 +1077,8 @@
                         placeholderPrefix: prefix
                     };
                 },
+
+                // Creates a function to update family members count and names
                 updateFamilyMembers(countKey, namesKey) {
                     return (relative) => {
                         const newCount = relative[countKey];
@@ -1050,18 +1089,28 @@
                         });
                     };
                 },
+
+                // Updates wife names based on count
                 updateWifeNames() {
                     this.updateFamilyMembers('count', 'names')(this.formData.heirs.spouseWives);
                 },
+
+                // Updates sons names for a relative
                 updateSonsNames(relative) {
                     this.updateFamilyMembers('sonsCount', 'sonsNames')(relative);
                 },
+
+                // Updates daughters names for a relative
                 updateDaughtersNames(relative) {
                     this.updateFamilyMembers('daughtersCount', 'daughtersNames')(relative);
                 },
+
+                // Updates grandsons names for a relative
                 updateGrandsonsNames(relative) {
                     this.updateFamilyMembers('grandsonsCount', 'grandsonsNames')(relative);
                 },
+
+                // Updates names for an heir category with all related properties
                 updateNames(heirCategory) {
                     const newCount = heirCategory.count;
                     heirCategory.names = Array.from({
@@ -1081,6 +1130,8 @@
                         };
                     });
                 },
+
+                // Converts a number to Bengali ordinal format
                 getBengaliOrdinal(number) {
                     const ordinals = {
                         1: '১ম জন',
@@ -1106,6 +1157,8 @@
                     };
                     return ordinals[number] || `${number}তম জন`;
                 },
+
+                // Formats a date string to Bengali locale format
                 formatDate(dateString) {
                     if (!dateString) return '';
                     const date = new Date(dateString);
@@ -1115,6 +1168,8 @@
                         year: 'numeric'
                     });
                 },
+
+                // Formats a time string to 12-hour format with AM/PM
                 formatTime(timeString) {
                     if (!timeString) return '';
                     const [hours, minutes] = timeString.split(':');
@@ -1125,10 +1180,14 @@
                     }
                     return `${hour === 0 ? 12 : hour}:${minutes} ${period}`;
                 },
+
+                // Replaces 'মৃত ব্যক্তির' with the deceased person's name in text
                 replaceDeceasedName(text) {
                     return this.formData.deceasedInfo.name ? text.replace(/মৃত ব্যক্তির/g,
                         `${this.formData.deceasedInfo.name}-এর`) : text;
                 },
+
+                // Checks if a relative should be disabled based on family status
                 isRelativeDisabled(key) {
                     const dependencyMap = {
                         maternalHalfBrother: ['hasSons', 'hasDeceasedSonsChildren', 'hasFatherOrGrandfather'],
@@ -1157,6 +1216,8 @@
                     return dependencyMap[key]?.some(condition => condition.endsWith('Count') ? status[condition] >
                         0 : status[condition]);
                 },
+
+                // Gets the current status of family members for dependency checks
                 getFamilyStatus() {
                     return {
                         hasSons: (this.formData.heirs.children.aliveSons?.count || 0) > 0,
@@ -1170,12 +1231,18 @@
                         hasPaternalHalfUncle: this.formData.heirs.otherRelatives.paternalHalfUncle.count > 0
                     };
                 },
+
+                // Moves to the next step in the form
                 nextStep() {
                     if (this.activeTab < this.buttons.length - 1) this.activeTab++;
                 },
+
+                // Moves to the previous step in the form
                 prevStep() {
                     if (this.activeTab > 0) this.activeTab--;
                 },
+
+                // Gets the Bengali number label for a given count and type
                 getBanglaNumberLabel(count, type) {
                     const labelCategories = {
                         aliveSons: this.generateLabels('ছেলে', 20),
@@ -1202,10 +1269,12 @@
                     };
                     return labelCategories[type]?.[count] || `${count} ${this.getBaseLabel(type)}`;
                 },
+
+                // Gets the base label for a given type
                 getBaseLabel(type) {
                     const labelMap = {
                         aliveSons: 'ছেলে',
-                        aliveDaughters: 'মেয়ে',
+                        aliveDaughters: 'মেয়ে',
                         brothers: 'ভাই',
                         sisters: 'বোন',
                         grandsons: 'ছেলের ছেলে',
@@ -1213,17 +1282,23 @@
                     };
                     return labelMap[type] || type.split('s')[0];
                 },
+
+                // Generates labels for a given base and maximum count
                 generateLabels(base, max) {
                     return Array.from({
                         length: max + 1
                     }, (_, i) => i === 0 ? `${base} নেই` : `${this.numberToBengali(i)} ${base}`);
                 },
+
+                // Converts a number to Bengali numeral
                 numberToBengali(num) {
                     const bengaliNumbers = ['১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯', '১০', '১১', '১২', '১৩',
                         '১৪', '১৫', '১৬', '১৭', '১৮', '১৯', '২০'
                     ];
                     return bengaliNumbers[num - 1] || num;
                 },
+
+                // Processes form data by replacing labels with deceased person's name
                 getProcessedFormData() {
                     const processedData = JSON.parse(JSON.stringify(this.formData));
                     const deceasedName = this.formData.deceasedInfo.name || 'মৃত ব্যক্তির';
@@ -1238,6 +1313,8 @@
                     replaceLabels(processedData);
                     return processedData;
                 },
+
+                // Submits the form data to the server and handles responses
                 submitForm() {
                     const formData = this.getProcessedFormData();
                     this.formData.version = this.formData.version ? this.formData.version + 1 : 1;
