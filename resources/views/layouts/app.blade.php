@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>ফারায়েজ</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Google Fonts: Tiro Bangla & Noto Serif Bengali -->
     <link
@@ -58,8 +59,8 @@
                             <li><a href="#" class="hover:underline">জিজ্ঞাসা</a></li>
                             <li><a href="#" class="hover:underline">যোগাযোগ</a></li>
                             <li>
-                                <a href="{{ route('calculator') }}" class="px-3 py-2 text-lg md:text-2xl text-white"
-                                    style="background-color: #005E00; border-radius: 4px;">
+                                <a href="{{ route('calculator') }}" class="px-4 py-4 text-lg md:text-2xl btn-green"
+                                    style="border-radius: 4px;">
                                     ক্যালকুলেট করুন
                                 </a>
                             </li>
@@ -75,8 +76,8 @@
                     <a href="#" class="block py-2 px-2 rounded mobile-menu-link">ব্লগ</a>
                     <a href="#" class="block py-2 px-2 rounded mobile-menu-link">জিজ্ঞাসা</a>
                     <a href="#" class="block py-2 px-2 rounded mobile-menu-link">যোগাযোগ</a>
-                    <a href="{{ route('calculator') }}" class="block px-3 py-2 mt-2 text-lg text-white"
-                        style="background-color: #005E00; border-radius: 4px;">ক্যালকুলেট করুন</a>
+                    <a href="{{ route('calculator') }}" class="block px-3 py-2 mt-2 text-lg btn-green"
+                        style="border-radius: 4px;">ক্যালকুলেট করুন</a>
                 </div>
             </div>
         </header>

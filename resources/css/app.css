@@ -1,3 +1,19 @@
+.btn-green {
+    background-color: #005e00 !important;
+    color: #fff !important;
+    transition: background 0.2s;
+}
+.btn-green:hover {
+    background-color: rgba(0, 94, 0, 0.7) !important;
+}
+.btn-light-green {
+    background-color: #41ab5d !important;
+    color: #fff !important;
+    transition: background 0.2s;
+}
+.btn-light-green:hover {
+    background-color: #005e00 !important;
+}
 .mobile-menu-link:hover {
     color: #005e00 !important;
 }
