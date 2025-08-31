@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>ফারায়েজ</title>
+    <title>ফারায়েজ | মুসলিম উত্তরাধিকার</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Google Fonts: Tiro Bangla & Noto Serif Bengali -->
     <link
         href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif+Bengali:wght@400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/vue@3"></script>
 
     <!-- Google tag (gtag.js) -->
@@ -88,9 +90,13 @@
         @yield('content')
     </main>
 
-    <footer class="bg-gray-900 text-white py-6">
-        <div class="container mx-auto text-center">
-            <p>Copyright &copy; 2025</p>
+    <footer class="bg-[#006F45] text-white py-6 font-['Times_New_Roman']">
+        <div class="container mx-auto text-center flex flex-col justify-center items-center gap-4">
+            <a href="{{ route('home') }}">
+                <img src="/logo.svg" alt="ফারায়েজ Logo" class="h-8 md:h-16" />
+            </a>
+            <hr class="border-t border-white w-full my-2">
+            <p>Copyright &copy; {{ date('Y') }} Faraiz - LEGAL FIST. All rights reserved.</p>
         </div>
     </footer>
 
@@ -108,6 +114,8 @@
             }
         }).mount("#layout-app");
     </script>
+    <script src="{{ asset('js/tabs.js') }}"></script>
+    <script src="{{ asset('js/quote-slider.js') }}"></script>
 </body>
 
 </html>

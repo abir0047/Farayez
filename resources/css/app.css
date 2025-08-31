@@ -1,24 +1,9 @@
-.btn-green {
-    background-color: #005e00 !important;
-    color: #fff !important;
-    transition: background 0.2s;
-}
-.btn-green:hover {
-    background-color: rgba(0, 94, 0, 0.7) !important;
-}
-.btn-light-green {
-    background-color: #41ab5d !important;
-    color: #fff !important;
-    transition: background 0.2s;
-}
-.btn-light-green:hover {
-    background-color: #005e00 !important;
-}
-.mobile-menu-link:hover {
-    color: #005e00 !important;
-}
 @import "tailwindcss";
 @source "../views";
+
+html {
+    scroll-behavior: smooth;
+}
 
 body {
     font-family: "Tiro Bangla", "Noto Serif Bengali", serif;
@@ -30,4 +15,92 @@ body {
     margin-right: auto;
     padding-left: 20px;
     padding-right: 20px;
+}
+
+/* Button Styles */
+.btn-green {
+    background-color: #005e00 !important;
+    color: #fff !important;
+    transition: background 0.2s;
+}
+
+.btn-green:hover {
+    background-color: rgba(0, 94, 0, 0.7) !important;
+}
+
+.btn-light-green {
+    background-color: #41ab5d !important;
+    color: #fff !important;
+    transition: background 0.2s;
+}
+
+.btn-light-green:hover {
+    background-color: #005e00 !important;
+}
+
+.mobile-menu-link:hover {
+    color: #005e00 !important;
+}
+
+/* Tab Styles */
+.farayez-tab {
+    position: relative;
+    cursor: pointer;
+    background: none;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.farayez-tab:hover {
+    border-bottom: 2px solid #41ab5d !important;
+}
+
+.farayez-tab.active {
+    border-bottom: 2px solid #41ab5d !important;
+}
+
+.farayez-tab.active {
+    border-bottom: 2px solid #41ab5d;
+}
+
+.farayez-content {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.farayez-content.hidden {
+    display: none;
+}
+
+/* Quote Slider Styles */
+.quote-swiper {
+    padding-bottom: 40px;
+}
+
+.quote-swiper .swiper-pagination {
+    position: relative;
+    bottom: 0;
+    margin-top: 20px;
+}
+
+.quote-swiper .swiper-pagination-bullet {
+    width: 22px;
+    height: 22px;
+    background: #41ab5d !important;
+    opacity: 0.5 !important;
+    transition: all 0.3s ease;
+    margin: 0 6px;
+}
+
+.quote-swiper .swiper-pagination-bullet:hover {
+    opacity: 0.8 !important;
+    background: #006f45 !important;
+    transform: scale(1.1);
+}
+
+.quote-swiper .swiper-pagination-bullet.swiper-pagination-bullet-active {
+    opacity: 1 !important;
+    background: #006f45 !important;
+    transform: scale(1.2);
 }
