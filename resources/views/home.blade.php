@@ -141,12 +141,48 @@
         <div class="container mx-auto">
             <h3 class="text-2xl font-bold mb-2 text-[#006F45] leading-normal">সাম্প্রতিক ব্লগ</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <div class="bg-white rounded-lg shadow p-6 flex items-center justify-center font-bold text-[#005E00]">
-                    সম্প্রতিক ব্লগ</div>
+                <a href="https://article.legalfist.com/civil-law/inheritance-law/%e0%a6%ae%e0%a7%81%e0%a6%b8%e0%a6%b2%e0%a6%bf%e0%a6%ae-%e0%a6%89%e0%a6%a4%e0%a7%8d%e0%a6%a4%e0%a6%b0%e0%a6%be%e0%a6%a7%e0%a6%bf%e0%a6%95%e0%a6%be%e0%a6%b0-%e0%a6%86%e0%a6%87%e0%a6%a8%e0%a7%87/"
+                    target="_blank"
+                    class="block bg-[#006F45] rounded-lg shadow overflow-hidden transition-all duration-300 hover:scale-105 transform">
+                    <div class="relative">
+                        <img src="http://article.legalfist.com/wp-content/uploads/2025/02/death-time-in-muslim-sharia-law-for-property-dividation.jpg"
+                            alt="Muslim Sharia Law Property Division" class="w-full object-cover" />
+                    </div>
+                    <div class="p-6 text-center text-lg text-white">
+                        মুসলিম উত্তরাধিকার আইনে সম্পত্তি বন্টনের ক্ষেত্রে মৃত্যুর সময় কেন এত গুরুত্বপূর্ণ?
+                    </div>
+                </a>
                 <div class="grid grid-cols-1 gap-4">
-                    <div class="bg-[#006F45] rounded-lg shadow p-6 text-white font-bold">সম্প্রতিক ব্লগ</div>
-                    <div class="bg-[#006F45] rounded-lg shadow p-6 text-white font-bold">সম্প্রতিক ব্লগ</div>
-                    <div class="bg-[#006F45] rounded-lg shadow p-6 text-white font-bold">সম্প্রতিক ব্লগ</div>
+                    <a href="https://article.legalfist.com/civil-law/inheritance-law/%e0%a6%b8%e0%a6%ae%e0%a7%8d%e0%a6%aa%e0%a6%a4%e0%a7%8d%e0%a6%a4%e0%a6%bf-%e0%a6%ac%e0%a6%a3%e0%a7%8d%e0%a6%9f%e0%a6%a8%e0%a7%87%e0%a6%b0-%e0%a6%af%e0%a7%87-%e0%a6%ae%e0%a7%8c%e0%a6%b2%e0%a6%bf/"
+                        target="_blank"
+                        class="bg-[#006F45] rounded-lg shadow overflow-hidden transition-all duration-300 hover:scale-105 transform block md:flex md:items-center md:gap-4">
+                        <div class="relative md:w-48 md:flex-shrink-0 h-auto md:h-32">
+                            <img src="http://article.legalfist.com/wp-content/uploads/2024/03/mistake-by-not-knowing-the-basics-of-property-distribution.jpg"
+                                alt="Blog Image" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="text-white p-4 text-center md:text-left">সম্পত্তি বণ্টনের যে মৌলিক বিষয়টি না
+                            জানার কারণে আপনি হিসেবে ভুল
+                            করছেন</div>
+                    </a>
+                    <a href="https://article.legalfist.com/civil-law/inheritance-law/%e0%a6%95%e0%a6%96%e0%a6%a8-%e0%a6%95%e0%a6%a8%e0%a7%8d%e0%a6%af%e0%a6%be-%e0%a6%b8%e0%a6%a8%e0%a7%8d%e0%a6%a4%e0%a6%be%e0%a6%a8-%e0%a6%8f%e0%a6%95%e0%a6%be%e0%a6%87-%e0%a6%aa%e0%a6%bf%e0%a6%a4/"
+                        target="_blank"
+                        class="bg-[#006F45] rounded-lg shadow overflow-hidden transition-all duration-300 hover:scale-105 transform block md:flex md:items-center md:gap-4">
+                        <div class="relative md:w-48 md:flex-shrink-0 h-auto md:h-32">
+                            <img src="http://article.legalfist.com/wp-content/uploads/2023/10/When-a-daughter-alone-can-own-the-entire-property-of-her-parents.jpg"
+                                alt="Blog Image" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="text-white p-4 text-center md:text-left">কখন কন্যা সন্তান একাই পিতা মাতার পুরো
+                            সম্পত্তির মালিক হতে পারে</div>
+                    </a>
+                    <a href="https://article.legalfist.com/civil-law/inheritance-law/%e0%a6%ae%e0%a7%83%e0%a6%a4-%e0%a6%93%e0%a7%9f%e0%a6%be%e0%a6%b0%e0%a6%bf%e0%a6%b6%e0%a7%87%e0%a6%b0-%e0%a6%89%e0%a6%a4%e0%a7%8d%e0%a6%a4%e0%a6%b0%e0%a6%be%e0%a6%a7%e0%a6%bf%e0%a6%95%e0%a6%be%e0%a6%b0/"
+                        target="_blank"
+                        class="bg-[#006F45] rounded-lg shadow overflow-hidden transition-all duration-300 hover:scale-105 transform block md:flex md:items-center md:gap-4">
+                        <div class="relative md:w-48 md:flex-shrink-0 h-auto md:h-32">
+                            <img src="http://article.legalfist.com/wp-content/uploads/2021/12/dead-warish-property-distribution.jpg"
+                                alt="Blog Image" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="text-white p-4 text-center md:text-left">মৃত ওয়ারিশের উত্তরাধিকার</div>
+                    </a>
                 </div>
             </div>
             <div class="flex justify-end mt-4">
@@ -165,7 +201,7 @@
                     class="bg-white rounded-lg shadow p-2 flex flex-col items-center hover:shadow-lg transition-shadow">
                     <div class="relative w-full">
                         <img src="https://img.youtube.com/vi/7Ec5nHTTrmU/maxresdefault.jpg" alt="Video 1"
-                            class="w-full h-32 object-cover rounded" />
+                            class="w-full h-auto object-cover rounded" />
                     </div>
                     <span class="mt-2">{{ getYoutubeTitle('7Ec5nHTTrmU') }}</span>
                 </a>
@@ -173,7 +209,7 @@
                     class="bg-white rounded-lg shadow p-2 flex flex-col items-center hover:shadow-lg transition-shadow">
                     <div class="relative w-full">
                         <img src="https://img.youtube.com/vi/BierIiqYFUs/maxresdefault.jpg" alt="Video 2"
-                            class="w-full h-32 object-cover rounded" />
+                            class="w-full h-auto object-cover rounded" />
                     </div>
                     <span class="mt-2">{{ getYoutubeTitle('BierIiqYFUs') }}</span>
                 </a>
@@ -181,7 +217,7 @@
                     class="bg-white rounded-lg shadow p-2 flex flex-col items-center hover:shadow-lg transition-shadow">
                     <div class="relative w-full">
                         <img src="https://img.youtube.com/vi/PPjkJVMRbTo/maxresdefault.jpg" alt="Video 3"
-                            class="w-full h-32 object-cover rounded" />
+                            class="w-full h-auto object-cover rounded" />
                     </div>
                     <span class="mt-2">{{ getYoutubeTitle('PPjkJVMRbTo') }}</span>
                 </a>
@@ -189,7 +225,7 @@
                     class="bg-white rounded-lg shadow p-2 flex flex-col items-center hover:shadow-lg transition-shadow">
                     <div class="relative w-full">
                         <img src="https://img.youtube.com/vi/ujtgqHUcTQg/maxresdefault.jpg" alt="Video 4"
-                            class="w-full h-32 object-cover rounded" />
+                            class="w-full h-auto object-cover rounded" />
                     </div>
                     <span class="mt-2">{{ getYoutubeTitle('ujtgqHUcTQg') }}</span>
                 </a>
@@ -197,7 +233,7 @@
                     class="bg-white rounded-lg shadow p-2 flex flex-col items-center hover:shadow-lg transition-shadow">
                     <div class="relative w-full">
                         <img src="https://img.youtube.com/vi/lxXF6Y4fT1c/maxresdefault.jpg" alt="Video 5"
-                            class="w-full h-32 object-cover rounded" />
+                            class="w-full h-auto object-cover rounded" />
                     </div>
                     <span class="mt-2">{{ getYoutubeTitle('lxXF6Y4fT1c') }}</span>
                 </a>
@@ -207,15 +243,6 @@
                     class="text-[#006F45] text-base mb-4 md:mb-0 underline hover:text-[#006F45ab] transition-colors duration-200">আরও
                     দেখুন ></a>
             </div>
-        </div>
-    </section>
-
-    <section class="bg-[#03442C] py-8">
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
-            <div class="text-white text-2xl mb-4 md:mb-0">উত্তরাধিকার সম্পর্কিত বিষয়ের কোনো প্রশ্ন আছে?</div>
-            <a href="#"
-                class="text-white text-2xl mb-4 md:mb-0 underline hover:text-[#03442C] transition-colors duration-200">যোগাযোগ
-                করুন ></a>
         </div>
     </section>
 @endsection

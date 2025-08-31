@@ -90,6 +90,15 @@
         @yield('content')
     </main>
 
+    <section class="bg-[#03442C] py-8">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+            <div class="text-white text-2xl mb-4 md:mb-0">উত্তরাধিকার সম্পর্কিত বিষয়ের কোনো প্রশ্ন আছে?</div>
+            <a href="#"
+                class="text-white text-2xl mb-4 md:mb-0 underline hover:text-[#41ab5d] transition-colors duration-200">যোগাযোগ
+                করুন ></a>
+        </div>
+    </section>
+
     <footer class="bg-[#006F45] text-white py-6 font-['Times_New_Roman']">
         <div class="container mx-auto text-center flex flex-col justify-center items-center gap-4">
             <a href="{{ route('home') }}">
