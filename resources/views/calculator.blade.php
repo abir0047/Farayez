@@ -37,13 +37,13 @@
                                 <div class="flex flex-col md:flex-row gap-4">
                                     <label class="flex items-center space-x-3 cursor-pointer group">
                                         <input type="radio" value="male" v-model="formData.deceasedInfo.gender"
-                                            class="h-5 w-5 text-[#006F45] border-2 border-gray-300 focus:ring-0 focus:border-[#006F45] rounded-full transition-all">
+                                            class="h-5 w-5 text-[#006F45] accent-[#006F45] border-2 border-gray-300 focus:ring-0 focus:border-[#006F45] rounded-full transition-all">
                                         <span
                                             class="text-black group-hover:text-[#006F45] text-sm md:text-base">পুরুষ</span>
                                     </label>
                                     <label class="flex items-center space-x-3 cursor-pointer group">
                                         <input type="radio" value="female" v-model="formData.deceasedInfo.gender"
-                                            class="h-5 w-5 text-green-600 border-2 border-green-300 focus:ring-0 focus:border-green-400 rounded-full transition-all">
+                                            class="h-5 w-5 text-green-600 border-2 accent-[#006F45] border-green-300 focus:ring-0 focus:border-green-400 rounded-full transition-all">
                                         <span class="text-black group-hover:text-[#006F45] text-sm md:text-base">নারী</span>
                                     </label>
                                 </div>
@@ -66,7 +66,7 @@
                         <div class="space-y-3">
                             <label class="block text-sm font-semibold text-[#006F45]">বৈবাহিক অবস্থা:</label>
                             <select v-model="formData.deceasedInfo.maritalStatus"
-                                class="w-full p-2 text-sm border-2 border-gray-300 rounded-lg focus:border-[#006F45] focus:ring-2 focus:ring-green-200">
+                                class="w-full p-2 text-sm border-2  border-gray-300 rounded-lg focus:border-[#006F45] focus:ring-2 focus:ring-green-200">
                                 <option value="married">বিবাহিত</option>
                                 <option value="unmarried">অবিবাহিত</option>
                                 <option value="divorced">অবিবাহিত কিন্তু তালাকপ্রাপ্ত</option>
@@ -118,12 +118,12 @@
                                 <div class="flex gap-3">
                                     <label class="flex items-center space-x-2">
                                         <input type="radio" value="alive" v-model="relation.status"
-                                            class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                            class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                         <span class="text-black">জীবিত</span>
                                     </label>
                                     <label class="flex items-center space-x-2">
                                         <input type="radio" value="dead" v-model="relation.status"
-                                            class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                            class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                         <span class="text-black">মৃত</span>
                                     </label>
                                 </div>
@@ -162,12 +162,12 @@
                                 <div class="flex gap-4">
                                     <label class="flex items-center space-x-2">
                                         <input type="radio" value="alive" v-model="formData.heirs.spouseStatus"
-                                            class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                            class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                         <span class="text-black">জীবিত</span>
                                     </label>
                                     <label class="flex items-center space-x-2">
                                         <input type="radio" value="dead" v-model="formData.heirs.spouseStatus"
-                                            class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                            class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                         <span class="text-black">মৃত</span>
                                     </label>
                                 </div>
@@ -202,15 +202,15 @@
                             </template>
                         </div>
                         <!--
-                                    Deceased Sons Section:
-                                    This section captures the number of deceased sons of the deceased person, their names, and their children (i.e., the deceased's grandchildren through sons).
+                                                                    Deceased Sons Section:
+                                                                    This section captures the number of deceased sons of the deceased person, their names, and their children (i.e., the deceased's grandchildren through sons).
 
-                                    Islamic inheritance law considers the children of deceased sons (grandchildren) as eligible heirs if their father (the son of the deceased) died before the deceased. For each deceased son, the user must input:
-                                    - The son's name (for clarity in distribution and for descendant tracking)
-                                    - The number and names of his sons (grandsons)
-                                    - The number and names of his daughters (granddaughters)
-                                    This allows the inheritance logic to properly allocate shares to grandchildren as per the rules.
-                                -->
+                                                                    Islamic inheritance law considers the children of deceased sons (grandchildren) as eligible heirs if their father (the son of the deceased) died before the deceased. For each deceased son, the user must input:
+                                                                    - The son's name (for clarity in distribution and for descendant tracking)
+                                                                    - The number and names of his sons (grandsons)
+                                                                    - The number and names of his daughters (granddaughters)
+                                                                    This allows the inheritance logic to properly allocate shares to grandchildren as per the rules.
+                                                                -->
                         <div class="space-y-6">
                             <div class="bg-white p-4 rounded-lg border border-green-200 shadow-sm">
                                 <div class="mb-4 pb-2 border-b border-green-200">
@@ -229,9 +229,9 @@
                                     <div v-if="formData.heirs.children.deceasedSons.count > 0"
                                         class="space-y-4 ml-4 pl-4 border-l-2 border-green-200">
                                         <!--
-                                                    v-for: For each deceased son, input his name and collect information about his children (grandsons and granddaughters).
-                                                    This loop ensures that each deceased son's descendants are tracked for inheritance calculations.
-                                                -->
+                                                                                    v-for: For each deceased son, input his name and collect information about his children (grandsons and granddaughters).
+                                                                                    This loop ensures that each deceased son's descendants are tracked for inheritance calculations.
+                                                                                -->
                                         <div v-for="(son, index) in formData.heirs.children.deceasedSons.names"
                                             :key="index" class="space-y-4">
                                             <div class="space-y-2">
@@ -251,9 +251,9 @@
                                                                 @{{ getBanglaNumberLabel(n - 1, 'sons') }}</option>
                                                         </select>
                                                         <!--
-                                                                    v-for: For each deceased son's son (grandson), input his name.
-                                                                    Grandsons through deceased sons can inherit if their father (the deceased's son) is not alive at the time of the deceased's death.
-                                                                -->
+                                                                                                    v-for: For each deceased son's son (grandson), input his name.
+                                                                                                    Grandsons through deceased sons can inherit if their father (the deceased's son) is not alive at the time of the deceased's death.
+                                                                                                -->
                                                         <div v-if="son.sonsCount > 0" class="space-y-2 ml-2">
                                                             <div v-for="(grandson, gIndex) in son.sonsNames"
                                                                 :key="gIndex">
@@ -273,9 +273,9 @@
                                                                 @{{ getBanglaNumberLabel(n - 1, 'daughters') }}</option>
                                                         </select>
                                                         <!--
-                                                                    v-for: For each deceased son's daughter (granddaughter), input her name.
-                                                                    Granddaughters through deceased sons may also inherit under certain circumstances, especially if there are no surviving sons or grandsons.
-                                                                -->
+                                                                                                    v-for: For each deceased son's daughter (granddaughter), input her name.
+                                                                                                    Granddaughters through deceased sons may also inherit under certain circumstances, especially if there are no surviving sons or grandsons.
+                                                                                                -->
                                                         <div v-if="son.daughtersCount > 0" class="space-y-2 ml-2">
                                                             <div v-for="(granddaughter, dIndex) in son.daughtersNames"
                                                                 :key="dIndex">
@@ -292,15 +292,15 @@
                                 </div>
                             </div>
                             <!--
-                                        Deceased Daughters Section:
-                                        This section collects the number of deceased daughters, their names, and their children (grandchildren through daughters).
+                                                                        Deceased Daughters Section:
+                                                                        This section collects the number of deceased daughters, their names, and their children (grandchildren through daughters).
 
-                                        Islamic inheritance law may allow the children of deceased daughters (especially grandsons) to inherit if certain conditions are met, such as the absence of direct male descendants. For each deceased daughter, input:
-                                        - The daughter's name
-                                        - The number and names of her sons (grandsons)
-                                        - The number and names of her daughters (granddaughters)
-                                        This information is essential for correct inheritance distribution.
-                                    -->
+                                                                        Islamic inheritance law may allow the children of deceased daughters (especially grandsons) to inherit if certain conditions are met, such as the absence of direct male descendants. For each deceased daughter, input:
+                                                                        - The daughter's name
+                                                                        - The number and names of her sons (grandsons)
+                                                                        - The number and names of her daughters (granddaughters)
+                                                                        This information is essential for correct inheritance distribution.
+                                                                    -->
                             <div class="bg-white p-4 rounded-lg border border-green-200 shadow-sm">
                                 <div class="mb-4 pb-2 border-b border-green-200">
                                     <h3 class="text-sm font-semibold text-[#006F45]">@{{ replaceDeceasedName('মৃত ব্যক্তির মৃত মেয়ে') }}</h3>
@@ -370,15 +370,15 @@
                             </div>
                         </div>
                         <!--
-                                    Siblings Section:
-                                    This section gathers information about the deceased's siblings (brothers and sisters) and their descendants. In Islamic inheritance law, siblings can inherit if there are no direct male descendants (sons/grandsons). The code tracks:
-                                    - Number and names of brothers and sisters.
-                                    - For brothers: whether they have sons (nephews) or grandsons (great-nephews), who may inherit if the brother is deceased and the deceased has no direct male descendants.
+                                                                    Siblings Section:
+                                                                    This section gathers information about the deceased's siblings (brothers and sisters) and their descendants. In Islamic inheritance law, siblings can inherit if there are no direct male descendants (sons/grandsons). The code tracks:
+                                                                    - Number and names of brothers and sisters.
+                                                                    - For brothers: whether they have sons (nephews) or grandsons (great-nephews), who may inherit if the brother is deceased and the deceased has no direct male descendants.
 
-                                    The v-for loops allow dynamic input for each sibling and their descendants. Conditional blocks (v-if/v-else) handle special inheritance scenarios, such as when brothers have no sons, and check for the existence of grandsons.
+                                                                    The v-for loops allow dynamic input for each sibling and their descendants. Conditional blocks (v-if/v-else) handle special inheritance scenarios, such as when brothers have no sons, and check for the existence of grandsons.
 
-                                    This structure ensures all eligible heirs among siblings and their descendants are captured for correct share calculation.
-                                -->
+                                                                    This structure ensures all eligible heirs among siblings and their descendants are captured for correct share calculation.
+                                                                -->
                         <div class="bg-white p-4 rounded-lg border border-green-200 shadow-sm">
                             <div class="space-y-4">
                                 <div v-for="(sibling, key) in formData.heirs.siblings" :key="key"
@@ -408,12 +408,12 @@
                                                 <div class="flex gap-4">
                                                     <label class="flex items-center space-x-2">
                                                         <input type="radio" value="yes" v-model="sibling.hasSons"
-                                                            class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                                            class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                                         <span class="text-black">হ্যাঁ</span>
                                                     </label>
                                                     <label class="flex items-center space-x-2">
                                                         <input type="radio" value="no" v-model="sibling.hasSons"
-                                                            class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                                            class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                                         <span class="text-black">না</span>
                                                     </label>
                                                 </div>
@@ -444,13 +444,13 @@
                                                             <label class="flex items-center space-x-2">
                                                                 <input type="radio" value="yes"
                                                                     v-model="sibling.hasGrandsons"
-                                                                    class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                                                    class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                                                 <span class="text-black">হ্যাঁ</span>
                                                             </label>
                                                             <label class="flex items-center space-x-2">
                                                                 <input type="radio" value="no"
                                                                     v-model="sibling.hasGrandsons"
-                                                                    class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                                                    class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                                                 <span class="text-black">না</span>
                                                             </label>
                                                         </div>
@@ -485,15 +485,15 @@
                         </div>
                     </div>
                     <!--
-                                Grandparents Section:
-                                This section collects the status (alive/dead) of the deceased's grandparents. According to Islamic inheritance law, grandparents may inherit only if the relevant parent (father or mother) is not alive at the time of the deceased's death. For example:
-                                - The paternal grandfather/grandmother can only inherit if the father is deceased.
-                                - The maternal grandmother can only inherit if the mother is deceased.
+                                                                Grandparents Section:
+                                                                This section collects the status (alive/dead) of the deceased's grandparents. According to Islamic inheritance law, grandparents may inherit only if the relevant parent (father or mother) is not alive at the time of the deceased's death. For example:
+                                                                - The paternal grandfather/grandmother can only inherit if the father is deceased.
+                                                                - The maternal grandmother can only inherit if the mother is deceased.
 
-                                The :disabled bindings on the radio buttons enforce this rule in the UI, preventing users from selecting a grandparent as alive if the corresponding parent is marked alive.
+                                                                The :disabled bindings on the radio buttons enforce this rule in the UI, preventing users from selecting a grandparent as alive if the corresponding parent is marked alive.
 
-                                The v-for loop iterates over all grandparent relations, displaying input options for each. This ensures that only eligible grandparents are considered for inheritance calculations.
-                            -->
+                                                                The v-for loop iterates over all grandparent relations, displaying input options for each. This ensures that only eligible grandparents are considered for inheritance calculations.
+                                                            -->
                     <div class="grid grid-cols-1 md:grid-cols-2 border-t gap-3 md:gap-4 pt-4">
                         <div v-for="(relation, key) in formData.heirs.aliveGrandParentStatus" :key="key"
                             class="flex flex-col gap-2 mb-2">
@@ -508,7 +508,7 @@
                                                     'paternalGrandMother'
                                                 ].includes(key) && formData.heirs.aliveParentStatus.father
                                                 .status === 'alive')"
-                                            class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45] disabled:opacity-50">
+                                            class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45] disabled:opacity-50">
                                         <span class="text-black">জীবিত</span>
                                     </label>
                                     <label class="flex items-center space-x-2">
@@ -518,7 +518,7 @@
                                                     'paternalGrandMother'
                                                 ].includes(key) && formData.heirs.aliveParentStatus.father
                                                 .status === 'alive')"
-                                            class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45] disabled:opacity-50">
+                                            class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45] disabled:opacity-50">
                                         <span class="text-black">মৃত</span>
                                     </label>
                                 </div>
@@ -531,15 +531,15 @@
                         </div>
                     </div>
                     <!--
-                                Other Relatives Section:
-                                This section handles additional possible heirs, such as uncles, aunts, or other extended family members. Islamic inheritance law includes these relatives only if there are no closer heirs (like children, siblings, or parents). For each relative, the code:
-                                - Collects the number and names of each type (e.g., paternal uncle, maternal aunt).
-                                - Tracks whether the relative has sons (e.g., cousins) or grandsons, who may inherit if their parent is not alive and there are no closer heirs.
+                                                                Other Relatives Section:
+                                                                This section handles additional possible heirs, such as uncles, aunts, or other extended family members. Islamic inheritance law includes these relatives only if there are no closer heirs (like children, siblings, or parents). For each relative, the code:
+                                                                - Collects the number and names of each type (e.g., paternal uncle, maternal aunt).
+                                                                - Tracks whether the relative has sons (e.g., cousins) or grandsons, who may inherit if their parent is not alive and there are no closer heirs.
 
-                                The v-for loops allow dynamic input for each relative and their descendants. Conditional v-if/v-else blocks manage special cases, such as asking about sons or grandsons if the primary relative is absent. The :disabled binding ensures only eligible relatives are selectable based on other heir data.
+                                                                The v-for loops allow dynamic input for each relative and their descendants. Conditional v-if/v-else blocks manage special cases, such as asking about sons or grandsons if the primary relative is absent. The :disabled binding ensures only eligible relatives are selectable based on other heir data.
 
-                                This structure ensures the inheritance calculation is comprehensive and compliant with Islamic rules, capturing all possible heirs in complex family scenarios.
-                            -->
+                                                                This structure ensures the inheritance calculation is comprehensive and compliant with Islamic rules, capturing all possible heirs in complex family scenarios.
+                                                            -->
                     <div class="bg-white p-4 rounded-lg border border-green-200 shadow-sm">
                         <div class="space-y-6">
                             <div v-for="(relative, key) in formData.heirs.otherRelatives" :key="key"
@@ -571,14 +571,14 @@
                                                             <input type="radio" value="yes"
                                                                 v-model="relative.hasSons"
                                                                 :disabled="isRelativeDisabled(key)"
-                                                                class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                                                class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                                             <span class="text-black">হ্যাঁ</span>
                                                         </label>
                                                         <label class="flex items-center space-x-2">
                                                             <input type="radio" value="no"
                                                                 v-model="relative.hasSons"
                                                                 :disabled="isRelativeDisabled(key)"
-                                                                class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                                                class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                                             <span class="text-black">না</span>
                                                         </label>
                                                     </div>
@@ -615,14 +615,14 @@
                                                                     <input type="radio" value="yes"
                                                                         v-model="relative.hasGrandsons"
                                                                         :disabled="isRelativeDisabled(key)"
-                                                                        class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                                                        class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                                                     <span class="text-black">হ্যাঁ</span>
                                                                 </label>
                                                                 <label class="flex items-center space-x-2">
                                                                     <input type="radio" value="no"
                                                                         v-model="relative.hasGrandsons"
                                                                         :disabled="isRelativeDisabled(key)"
-                                                                        class="h-4 w-4 text-[#006F45] border-green-300 focus:ring-[#006F45]">
+                                                                        class="h-4 w-4 text-[#006F45] accent-[#006F45] border-green-300 focus:ring-[#006F45]">
                                                                     <span class="text-black">না</span>
                                                                 </label>
                                                             </div>
@@ -959,6 +959,46 @@
                         child.count = Math.max(0, parseInt(child.count));
                     });
                     return data;
+                },
+                // Merge assets by keeping defaults but overriding with initial values
+                mergeAssets(defaultAssets, initialAssets) {
+                    const merged = {
+                        ...defaultAssets
+                    };
+                    if (initialAssets && typeof initialAssets === 'object') {
+                        Object.keys(initialAssets).forEach(key => {
+                            if (merged[key]) {
+                                merged[key] = {
+                                    ...merged[key],
+                                    ...initialAssets[key]
+                                };
+                            }
+                        });
+                    }
+                    return merged;
+                },
+
+                // Merge heirs by keeping defaults but overriding with initial values
+                mergeHeirs(defaultHeirs, initialHeirs) {
+                    const merged = {
+                        ...defaultHeirs
+                    };
+                    if (initialHeirs && typeof initialHeirs === 'object') {
+                        Object.keys(initialHeirs).forEach(key => {
+                            if (merged[key]) {
+                                // deep merge for objects
+                                if (typeof merged[key] === 'object' && !Array.isArray(merged[key])) {
+                                    merged[key] = {
+                                        ...merged[key],
+                                        ...initialHeirs[key]
+                                    };
+                                } else {
+                                    merged[key] = initialHeirs[key];
+                                }
+                            }
+                        });
+                    }
+                    return merged;
                 },
 
                 // Merges initial data with default values
