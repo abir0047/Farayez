@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container mx-auto px-4 max-w-4xl text-center">
-        <h2 class="text-lg sm:text-xl font-bold text-blue-900">
+        <h2 class="text-lg sm:text-xl font-bold text-[#006F45]">
             মুসলিম উত্তরাধিকারের আইন অনুযায়ী সম্পত্তি বন্টন
         </h2>
 
@@ -20,7 +20,7 @@
             @endif
         </h3>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6 p-4 border rounded-lg bg-gray-100 text-sm sm:text-base">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6 p-4 border rounded-lg bg-[#F5FFE8] text-sm sm:text-base">
             @foreach ($assets as $asset)
                 <div>{{ $asset['name'] }}: {{ banglaNumber(number_format($asset['value'])) }} {{ $asset['unit'] }}</div>
             @endforeach
@@ -37,7 +37,7 @@
         <!-- Responsive Table Wrapper -->
         <div class="overflow-x-auto">
             <table class="w-full border-collapse border border-gray-300 my-6 text-sm sm:text-base">
-                <thead class="bg-blue-900 text-white">
+                <thead class="bg-[#006F45] text-white">
                     <tr>
                         <th class="p-2 border">সম্পর্ক</th>
                         <th class="p-2 border">নাম</th>
@@ -47,7 +47,7 @@
                             <th class="p-2 border relative group">
                                 {{ $asset['name'] }}
                                 <span
-                                    class="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1 -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap tooltip-arrow">
+                                    class="absolute hidden group-hover:block bg-black text-white text-xs rounded p-1 -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap tooltip-arrow">
                                     {{ $asset['unit'] }}
                                 </span>
                             </th>
@@ -81,7 +81,7 @@
         </div>
 
         <!-- Contact Info -->
-        <div class="text-start my-6 text-sm text-gray-600">
+        <div class="text-start my-6 text-sm text-black">
             <p class="mb-4">
                 সার্বিক সহযোগিতায়<br>
                 <span class="font-semibold">অ্যাডভোকেট চৌধুরী তানবীর আহমেদ ছিদ্দিক</span><br>
@@ -95,7 +95,7 @@
                 class="px-4 py-2 bg-gray-600 text-white rounded-lg w-full sm:w-auto">
                 পূর্বের পাতা
             </a>
-            <a href="" class="px-4 py-2 bg-blue-500 text-white rounded-lg w-full sm:w-auto">
+            <a href="" class="px-4 py-2 bg-[#006F45] text-white rounded-lg w-full sm:w-auto">
                 ডাউনলোড
             </a>
             <a href="" class="px-4 py-2 bg-red-500 text-white rounded-lg w-full sm:w-auto">
@@ -229,7 +229,7 @@
             margin-left: -5px;
             border-width: 5px;
             border-style: solid;
-            border-color: transparent transparent #1F2937 transparent;
+            border-color: transparent transparent black transparent;
         }
     </style>
 @endsection
