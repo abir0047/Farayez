@@ -29,7 +29,8 @@ class InheritanceCalculator
             'cash' => ['name' => 'নগদ টাকার পরিমাণ', 'unit' => 'ব্যাংক/আর্থিক প্রতিষ্ঠান ভিত্তিত'],
             'investment' => ['name' => 'বিনিয়োগের পরিমাণ', 'unit' => 'ব্যাংক/আর্থিক প্রতিষ্ঠান ভিত্তিত'],
             'owedCash' => ['name' => 'পাওনা টাকার পরিমাণ', 'unit' => 'ব্যাংক/আর্থিক প্রতিষ্ঠান ভিত্তিত'],
-            'UnpaidDebt' => ['name' => 'অপরিশোধিত ঋণ', 'unit' => 'টাকায়']
+            'unpaidDebt' => ['name' => 'অপরিশোধিত ঋণ', 'unit' => 'টাকায়'],
+            'jewellery' => ['name' => 'অলংকারের পরিমাণ', 'unit' => 'টাকায়']
         ];
 
         $assetDistribution = [];
@@ -39,13 +40,14 @@ class InheritanceCalculator
             $assetDistribution[$assetKey] = [
                 'name' => $assetLabels[$assetKey]['name'],
                 'unit' => $assetLabels[$assetKey]['unit'],
-                'value' => $asset['value'],
+                'value' => $this->convertBengaliToEnglish($asset['value']),
                 'shares' => []
             ];
 
             foreach ($this->results as $share) {
                 $share_fraction = $share['numerator'] / $share['denominator'];
-                $assetShare = $asset['value'] * $share_fraction;
+                $numericValue = $this->convertBengaliToEnglish($asset['value']);
+                $assetShare = $numericValue * $share_fraction;
 
                 $assetDistribution[$assetKey]['shares'][] = [
                     'relation' => $share['relation'],
@@ -117,11 +119,11 @@ class InheritanceCalculator
             $this->remainingShareDenominator /= $gcd;
         }
 
-        // 3. Mother's share (FIXED: Check for ANY full siblings, not "more than one")
+        // 3. Mother's share (CORRECTED: Mother gets 1/6 if deceased has descendants OR siblings, otherwise 1/3)
         if ($this->isAlive('aliveParentStatus', 'mother')) {
             // Mother gets 1/6 if deceased has:
             // - Any descendants (sons/daughters) OR 
-            // - ANY full siblings (even one)
+            // - ANY siblings (full, paternal half, or maternal half)
             if ($this->hasDescendantSons() || $this->hasDescendantDaughters() || $this->hasAnySiblings()) {
                 // Mother gets 1/6
                 $this->addShare(
@@ -157,9 +159,26 @@ class InheritanceCalculator
                 $this->remainingShareNumerator /= $gcd;
                 $this->remainingShareDenominator /= $gcd;
             }
+        } elseif ($this->isAlive('aliveGrandParentStatus', 'maternalGrandmother')) {
+            // Maternal grandmother inherits only if mother is dead
+            $this->addShare(
+                $this->data['heirs']['aliveGrandParentStatus']['maternalGrandmother']['label'],
+                1,  // numerator
+                6,  // denominator
+                $this->data['heirs']['aliveGrandParentStatus']['maternalGrandmother']['name']
+            );
+
+            // Update remaining share using fraction arithmetic
+            $this->remainingShareNumerator = $this->remainingShareNumerator * 6 - 1 * $this->remainingShareDenominator;
+            $this->remainingShareDenominator *= 6;
+
+            // Simplify fraction
+            $gcd = $this->computeGCD($this->remainingShareNumerator, $this->remainingShareDenominator);
+            $this->remainingShareNumerator /= $gcd;
+            $this->remainingShareDenominator /= $gcd;
         }
 
-        // 4. Daughter's share (correct)
+        // 4. Daughter's share (CORRECTED: Daughters only get fixed shares when there are NO sons)
         if (!$this->hasDescendantSons()) {
             $aliveDaughters = $this->data['heirs']['children']['aliveDaughters']['count'] ?? 0;
             $deceasedDaughters = $this->data['heirs']['children']['deceasedDaughters']['names'] ?? [];
@@ -431,93 +450,7 @@ class InheritanceCalculator
             }
         }
 
-        // 7. Maternal Half-Sibling's share (FIXED: Check for NO parents/children)
-        if (
-            !$this->isAlive('aliveParentStatus', 'father')
-            && !$this->isAlive('aliveParentStatus', 'mother')
-            && !$this->hasDescendantSons()
-            && !$this->hasDescendantDaughters()
-        ) {
-            $maternalBrothers = $this->data['heirs']['otherRelatives']['maternalHalfBrother'] ?? [];
-            $maternalSisters = $this->data['heirs']['otherRelatives']['maternalHalfSister'] ?? [];
-
-            $brotherCount = $maternalBrothers['count'] ?? 0;
-            $sisterCount = $maternalSisters['count'] ?? 0;
-            $totalSiblings = $brotherCount + $sisterCount;
-
-            if ($totalSiblings > 0) {
-                // Determine total share as fraction (1/6 for single, 1/3 for multiple)
-                $totalShareNumerator = $totalSiblings === 1 ? 1 : 1;
-                $totalShareDenominator = $totalSiblings === 1 ? 6 : 3;
-
-                $totalParts = ($brotherCount * 2) + $sisterCount;
-
-                if ($totalParts > 0) {
-                    // Calculate part value as fraction
-                    $partValueNumerator = $totalShareNumerator;
-                    $partValueDenominator = $totalShareDenominator * $totalParts;
-
-                    // Simplify part value fraction
-                    $gcd = $this->computeGCD($partValueNumerator, $partValueDenominator);
-                    $partValueNumerator /= $gcd;
-                    $partValueDenominator /= $gcd;
-
-                    // Process brothers with 2:1 ratio (each brother gets 2 parts)
-                    foreach ($maternalBrothers['names'] as $index => $brother) {
-                        $brotherNumerator = $partValueNumerator * 2;
-                        $brotherDenominator = $partValueDenominator;
-
-                        // Simplify brother's fraction
-                        $gcdBrother = $this->computeGCD($brotherNumerator, $brotherDenominator);
-                        $brotherNumerator /= $gcdBrother;
-                        $brotherDenominator /= $gcdBrother;
-
-                        $label = $this->addOrdinalToLabel(
-                            $maternalBrothers['label'] ?? 'বৈপিত্রেয় ভাই',
-                            $index
-                        );
-                        $this->addShare(
-                            $label,
-                            $brotherNumerator,
-                            $brotherDenominator,
-                            $brother['name'] ?? null
-                        );
-                    }
-
-                    // Process sisters (each sister gets 1 part)
-                    foreach ($maternalSisters['names'] as $index => $sister) {
-                        $sisterNumerator = $partValueNumerator;
-                        $sisterDenominator = $partValueDenominator;
-
-                        // Simplify sister's fraction (though it may already be simplified)
-                        $gcdSister = $this->computeGCD($sisterNumerator, $sisterDenominator);
-                        $sisterNumerator /= $gcdSister;
-                        $sisterDenominator /= $gcdSister;
-
-                        $label = $this->addOrdinalToLabel(
-                            $maternalSisters['label'] ?? 'বৈপিত্রেয় বোন',
-                            $index
-                        );
-                        $this->addShare(
-                            $label,
-                            $sisterNumerator,
-                            $sisterDenominator,
-                            $sister['name'] ?? null
-                        );
-                    }
-
-                    // Update remaining share using fraction arithmetic
-                    $this->remainingShareNumerator = $this->remainingShareNumerator * $totalShareDenominator
-                        - $totalShareNumerator * $this->remainingShareDenominator;
-                    $this->remainingShareDenominator *= $totalShareDenominator;
-
-                    // Simplify remaining share fraction
-                    $gcdRemaining = $this->computeGCD($this->remainingShareNumerator, $this->remainingShareDenominator);
-                    $this->remainingShareNumerator /= $gcdRemaining;
-                    $this->remainingShareDenominator /= $gcdRemaining;
-                }
-            }
-        }
+        // 7. Maternal Half-Siblings are handled in residue allocation, not fixed shares
     }
 
 
@@ -593,12 +526,12 @@ class InheritanceCalculator
     private function allocateResidue()
     {
         if ($this->remainingShareNumerator > 0) {
-            // 1. Descendant sons or their sons
-            if ($this->hasDescendantSons()) {
+            // 1. Descendant sons or their sons (this includes both sons and daughters in 2:1 ratio)
+            if ($this->hasDescendantSons() || $this->hasDescendantDaughters()) {
                 $this->distributeResidueAmongChildren();
             }
-            // 2. Father
-            elseif ($this->isAlive('aliveParentStatus', 'father')) {
+            // 2. Father (only if not already processed in fixed shares)
+            elseif ($this->isAlive('aliveParentStatus', 'father') && !$this->hasDescendantSons() && !$this->hasDescendantDaughters()) {
                 $this->addShare(
                     $this->data['heirs']['aliveParentStatus']['father']['label'],
                     $this->remainingShareNumerator,
@@ -608,8 +541,8 @@ class InheritanceCalculator
                 $this->remainingShareNumerator = 0;
                 $this->remainingShareDenominator = 1;
             }
-            // 3. Paternal grandfather
-            elseif ($this->isAlive('aliveGrandParentStatus', 'paternalGrandfather')) {
+            // 3. Paternal grandfather (only if father is dead and not already processed in fixed shares)
+            elseif ($this->isAlive('aliveGrandParentStatus', 'paternalGrandfather') && !$this->isAlive('aliveParentStatus', 'father') && !$this->hasDescendantSons() && !$this->hasDescendantDaughters()) {
                 $this->addShare(
                     $this->data['heirs']['aliveGrandParentStatus']['paternalGrandfather']['label'],
                     $this->remainingShareNumerator,
@@ -619,19 +552,34 @@ class InheritanceCalculator
                 $this->remainingShareNumerator = 0;
                 $this->remainingShareDenominator = 1;
             }
-            // 4. Full siblings or their sons
-            elseif ($this->hasFullSiblingsOrDescendants()) {
+            // 3a. Paternal grandmother (only if grandfather is dead and not already processed in fixed shares)
+            elseif ($this->isAlive('aliveGrandParentStatus', 'paternalGrandmother') && !$this->isAlive('aliveGrandParentStatus', 'paternalGrandfather') && !$this->isAlive('aliveParentStatus', 'father') && !$this->hasDescendantSons() && !$this->hasDescendantDaughters()) {
+                $this->addShare(
+                    $this->data['heirs']['aliveGrandParentStatus']['paternalGrandmother']['label'],
+                    $this->remainingShareNumerator,
+                    $this->remainingShareDenominator,
+                    $this->data['heirs']['aliveGrandParentStatus']['paternalGrandmother']['name']
+                );
+                $this->remainingShareNumerator = 0;
+                $this->remainingShareDenominator = 1;
+            }
+            // 4. Full siblings or their sons (only if not already processed in fixed shares)
+            elseif ($this->hasFullSiblingsOrDescendants() && $this->isAlive('aliveParentStatus', 'father') && !$this->hasDescendantSons() && !$this->hasDescendantDaughters()) {
                 $this->distributeResidueToFullSiblings();
             }
-            // 5. Paternal half-siblings or their sons
-            elseif ($this->hasPaternalHalfSiblingsOrDescendants()) {
+            // 5. Paternal half-siblings or their sons (only if not already processed in fixed shares)
+            elseif ($this->hasPaternalHalfSiblingsOrDescendants() && $this->isAlive('aliveParentStatus', 'father') && !$this->hasDescendantSons() && !$this->hasDescendantDaughters()) {
                 $this->distributeResidueToPaternalHalfSiblings();
             }
-            // 6. Full paternal uncles or their sons
+            // 6. Maternal half-siblings
+            elseif ($this->hasMaternalHalfSiblings()) {
+                $this->distributeResidueToMaternalHalfSiblings();
+            }
+            // 7. Full paternal uncles or their sons
             elseif ($this->hasFullPaternalUnclesOrDescendants()) {
                 $this->distributeResidueToFullPaternalUncles();
             }
-            // 7. Half paternal uncles or their sons
+            // 8. Half paternal uncles or their sons
             elseif ($this->hasHalfPaternalUnclesOrDescendants()) {
                 $this->distributeResidueToHalfPaternalUncles();
             } else {
@@ -914,7 +862,7 @@ class InheritanceCalculator
     private function hasPaternalHalfSiblingsOrDescendants()
     {
         $halfBrothers = $this->data['heirs']['otherRelatives']['paternalHalfBrother']['count'] ?? 0;
-        $halfSisters = $this->data['heirs']['otherRelatives']['paternalHalfSister']['count'] ?? 0;
+        $halfSisters = $this->data['heirs']['alivePaternalHalfSisters']['count'] ?? 0;
 
         // Check deceased half-brothers with sons
         $deceasedHalfBrothersWithSons = array_filter(
@@ -928,7 +876,7 @@ class InheritanceCalculator
     private function distributeResidueToPaternalHalfSiblings()
     {
         $halfBrotherData = $this->data['heirs']['otherRelatives']['paternalHalfBrother'] ?? [];
-        $halfSisterData = $this->data['heirs']['otherRelatives']['paternalHalfSister'] ?? [];
+        $halfSisterData = $this->data['heirs']['alivePaternalHalfSisters'] ?? [];
 
         $aliveHalfBrothersCount = $halfBrotherData['count'] ?? 0;
         $aliveHalfSistersCount = $halfSisterData['count'] ?? 0;
@@ -1269,6 +1217,91 @@ class InheritanceCalculator
         return false;
     }
 
+    private function hasMaternalHalfSiblings()
+    {
+        $maternalBrothers = $this->data['heirs']['otherRelatives']['maternalHalfBrother'] ?? [];
+        $maternalSisters = $this->data['heirs']['otherRelatives']['maternalHalfSister'] ?? [];
+
+        $brotherCount = $maternalBrothers['count'] ?? 0;
+        $sisterCount = $maternalSisters['count'] ?? 0;
+
+        return ($brotherCount + $sisterCount) > 0;
+    }
+
+    private function distributeResidueToMaternalHalfSiblings()
+    {
+        $maternalBrothers = $this->data['heirs']['otherRelatives']['maternalHalfBrother'] ?? [];
+        $maternalSisters = $this->data['heirs']['otherRelatives']['maternalHalfSister'] ?? [];
+
+        $brotherCount = $maternalBrothers['count'] ?? 0;
+        $sisterCount = $maternalSisters['count'] ?? 0;
+        $totalSiblings = $brotherCount + $sisterCount;
+
+        if ($totalSiblings === 0) {
+            return;
+        }
+
+        // Calculate total parts based on 2:1 ratio (brothers get 2 parts, sisters get 1)
+        $totalParts = ($brotherCount * 2) + $sisterCount;
+
+        // Calculate part value as a fraction
+        $partValueNumerator = $this->remainingShareNumerator;
+        $partValueDenominator = $this->remainingShareDenominator * $totalParts;
+
+        // Simplify the part value fraction
+        $gcd = $this->computeGCD($partValueNumerator, $partValueDenominator);
+        $partValueNumerator /= $gcd;
+        $partValueDenominator /= $gcd;
+
+        // Distribute to maternal half-brothers (2 parts each)
+        foreach (array_slice($maternalBrothers['names'] ?? [], 0, $brotherCount) as $index => $brother) {
+            $brotherNumerator = $partValueNumerator * 2;
+            $brotherDenominator = $partValueDenominator;
+
+            // Simplify brother's fraction
+            $brotherGcd = $this->computeGCD($brotherNumerator, $brotherDenominator);
+            $brotherNumerator /= $brotherGcd;
+            $brotherDenominator /= $brotherGcd;
+
+            $label = $this->addOrdinalToLabel(
+                $maternalBrothers['label'] ?? 'বৈপিত্রেয় ভাই',
+                $index
+            );
+            $this->addShare(
+                $label,
+                $brotherNumerator,
+                $brotherDenominator,
+                $brother['name'] ?? null
+            );
+        }
+
+        // Distribute to maternal half-sisters (1 part each)
+        foreach (array_slice($maternalSisters['names'] ?? [], 0, $sisterCount) as $index => $sister) {
+            $sisterNumerator = $partValueNumerator;
+            $sisterDenominator = $partValueDenominator;
+
+            // Simplify sister's fraction
+            $sisterGcd = $this->computeGCD($sisterNumerator, $sisterDenominator);
+            $sisterNumerator /= $sisterGcd;
+            $sisterDenominator /= $sisterGcd;
+
+            $label = $this->addOrdinalToLabel(
+                $maternalSisters['label'] ?? 'বৈপিত্রেয় বোন',
+                $index
+            );
+            $this->addShare(
+                $label,
+                $sisterNumerator,
+                $sisterDenominator,
+                $sister['name'] ?? null
+            );
+        }
+
+        // Reset remaining share
+        $this->remainingShareNumerator = 0;
+        $this->remainingShareDenominator = 1;
+    }
+
     private function hasChildren()
     {
         $aliveSons = $this->data['heirs']['children']['aliveSons']['count'] ?? 0;
@@ -1308,14 +1341,52 @@ class InheritanceCalculator
     {
         $full = ($this->data['heirs']['siblings']['brothers']['count'] ?? 0) + ($this->data['heirs']['siblings']['sisters']['count'] ?? 0);
         $paternalHalf = ($this->data['heirs']['alivePaternalHalfSisters']['count'] ?? 0) + ($this->data['heirs']['otherRelatives']['paternalHalfBrother']['count'] ?? 0);
-        $maternalHalf = ($this->data['heirs']['aliveMaternalHalfSiblings']['count'] ?? 0);
+        $maternalHalf = ($this->data['heirs']['otherRelatives']['maternalHalfBrother']['count'] ?? 0) + ($this->data['heirs']['otherRelatives']['maternalHalfSister']['count'] ?? 0);
         return ($full + $paternalHalf + $maternalHalf) > 0;
+    }
+
+    private function hasNonMaternalSiblings()
+    {
+        $full = ($this->data['heirs']['siblings']['brothers']['count'] ?? 0) + ($this->data['heirs']['siblings']['sisters']['count'] ?? 0);
+        $paternalHalf = ($this->data['heirs']['alivePaternalHalfSisters']['count'] ?? 0) + ($this->data['heirs']['otherRelatives']['paternalHalfBrother']['count'] ?? 0);
+        return ($full + $paternalHalf) > 0;
     }
 
     private function isAlive($parentKey, $relation)
     {
         return isset($this->data['heirs'][$parentKey][$relation]) &&
             $this->data['heirs'][$parentKey][$relation]['status'] === 'alive';
+    }
+
+    /**
+     * Convert Bengali numerals to English numerals for calculations
+     */
+    private function convertBengaliToEnglish($value)
+    {
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+
+        // Convert Bengali numerals to English numerals
+        $bengaliToEnglish = [
+            '০' => '0',
+            '১' => '1',
+            '২' => '2',
+            '৩' => '3',
+            '৪' => '4',
+            '৫' => '5',
+            '৬' => '6',
+            '৭' => '7',
+            '৮' => '8',
+            '৯' => '9'
+        ];
+
+        $englishValue = str_replace(array_keys($bengaliToEnglish), array_values($bengaliToEnglish), $value);
+
+        // Remove any non-numeric characters except decimal point
+        $cleanValue = preg_replace('/[^\d.]/', '', $englishValue);
+
+        return (float) $cleanValue;
     }
 
     private function calculateTotalEstate($assets)
@@ -1327,13 +1398,16 @@ class InheritanceCalculator
             'cash' => 'নগদ টাকার পরিমাণ',
             'investment' => 'বিনিয়োগের পরিমাণ',
             'owedCash' => 'পাওনা টাকার পরিমাণ',
-            'UnpaidDebt' => 'অপরিশোধিত ঋণ'
+            'unpaidDebt' => 'অপরিশোধিত ঋণ',
+            'jewellery' => 'অলংকারের পরিমাণ'
         ];
 
         $total = 0;
         foreach ($assets as $key => $asset) {
             if (array_key_exists($key, $assetLabels)) {
-                $total += $asset['value'];
+                // Convert Bengali numerals to English numerals before calculation
+                $numericValue = $this->convertBengaliToEnglish($asset['value']);
+                $total += $numericValue;
             }
         }
         return $total;

@@ -50,17 +50,17 @@
         <div class="container mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <button
-                    class="farayez-tab text-xl md:text-2xl px-4 md:px-8 py-4 min-h-[80px] flex items-center justify-center text-center active"
+                    class="farayez-tab text-xl md:text-2xl md:px-8 md:py-4 md:min-h-[80px] flex items-center justify-center text-center active"
                     data-tab="tab1">
                     মুসলিম ফারায়েজ ইতিহাস
                 </button>
                 <button
-                    class="farayez-tab text-xl md:text-2xl px-4 md:px-8 py-4 min-h-[80px] flex items-center justify-center text-center"
+                    class="farayez-tab text-xl md:text-2xl md:px-8 md:py-4 md:min-h-[80px] flex items-center justify-center text-center"
                     data-tab="tab2">
                     প্রবর্তন
                 </button>
                 <button
-                    class="farayez-tab text-xl md:text-2xl px-4 md:px-8 py-4 min-h-[80px] flex items-center justify-center text-center"
+                    class="farayez-tab text-xl md:text-2xl md:px-8 md:py-4 md:min-h-[80px] flex items-center justify-center text-center"
                     data-tab="tab3">
                     বর্তমান বিশ্বে
                 </button>

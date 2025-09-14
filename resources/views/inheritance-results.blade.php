@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto px-4 max-w-4xl text-center">
+    <div class="container mx-auto px-4 py-8 max-w-4xl text-center">
         <h2 class="text-lg sm:text-xl font-bold text-[#006F45]">
             মুসলিম উত্তরাধিকারের আইন অনুযায়ী সম্পত্তি বন্টন
         </h2>
@@ -85,7 +85,8 @@
             <p class="mb-4">
                 সার্বিক সহযোগিতায়<br>
                 <span class="font-semibold">অ্যাডভোকেট চৌধুরী তানবীর আহমেদ ছিদ্দিক</span><br>
-                মোবাইলঃ ০১৮৮২-৬৮৯২৯৯ | ই-মেইলঃ tanbiradvocate@gmail.com
+                মোবাইলঃ <a href="tel:01882689299" class="hover:underline">০১৮৮২-৬৮৯২৯৯</a> | ই-মেইলঃ <a
+                    href="mailto:tanbiradvocate@gmail.com" class="hover:underline">tanbiradvocate@gmail.com</a>
             </p>
         </div>
 
